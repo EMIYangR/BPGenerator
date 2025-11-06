@@ -9,61 +9,97 @@
 	<link rel="stylesheet" href="assets/css/index.css">
 	<script src="assets/js/jquery-3.6.0.min.js"></script>
 	<script src="assets/js/js.cookie.min.js"></script>
-	<script type="module" src="assets/js/index.js"></script>
-	<title>BP low-code shortcut editor for Liquipedia HoK Wiki</title>
+	<script src="assets/js/index.js"></script>
+	<title>BP Generator for Liquipedia HoK Wiki</title>
 </head>
 
 <body>
+	<div id="Modal" class="modal" style="display:none;">
+		<div class="modal-content">
+			<span class="close">×</span>
+			<div>
+				<label>
+					<input type="radio" name="mode" value="search" checked>
+					<span id="SearchHeroAlies">Search Hero Alias</span>
+				</label>
+				<label>
+					<input type="radio" name="mode" value="add">
+					<span id="AddHeroAlies">Add Hero</span>
+				</label>
+			</div>
+			<div id="Search">
+				<h3 id="SearchHero">Search/Update Hero Alias</h3>
+				<select id="HeroNamesSelect" class="txtBorder">
+					<option value="" id="HeroNames">HeroNames</option>
+				</select><br>
+				<textarea name="showHeroAlies" id="showHeroAlies" class="txtBorder"
+					style="width:188px;height: 38.6px;"></textarea><br>
+				<button id="updateAliasButton" class="btn btn-info">Update</button>
+				<button id="DeleteHeroButton" class="btn btn-danger">Delete</button>
+			</div>
+			<div id="Add" style="display:none;">
+				<h3 id="AddHero">Add Hero</h3>
+				<span id="HeroName" class="modalSpan">Hero Name </span>
+				<input type="text" id="newHeroName" class="txtBorder" placeholder=""><br>
+				<span id="HeroValue" class="modalSpan">Hero Value</span>
+				<input type="text" id="newHeroValue" class="txtBorder" placeholder=""><br>
+				<span id="HeroAlias" class="modalSpan">Hero Alias</span>
+				<textarea type="text" id="newHeroAlias" class="txtBorder" placeholder=""></textarea><br>
+				<span class="modalSpan"></span>
+				<button id="insertAliasButton" class="btn btn-info">Insert</button>
+			</div>
+		</div>
+	</div>
 	<div id="container">
 		<div id="content">
 			<div id="tool">
 				<div id="titleDiv">
-					<label for="isUltimateBattle"><b>Ultimate Battle? </b></label>
+					<label for="isUltimateBattle"><b id="UltimateBattle">Ultimate Battle? </b></label>
 					<input type="checkbox" id="isUltimateBattle" class="txtBorder checkbox1">
 
-					<label for="isOnlyBans"><b>Only Need Bans? </b></label>
+					<label for="isOnlyBans"><b id="OnlyBans">Only Need Bans? </b></label>
 					<input type="checkbox" id="isOnlyBans" class="txtBorder checkbox1">
 
-					<label for="isOnlyPicks"><b>Only Need Picks? </b></label>
+					<label for="isOnlyPicks"><b id="OnlyPicks">Only Need Picks? </b></label>
 					<input type="checkbox" id="isOnlyPicks" class="txtBorder checkbox1">
 
-					<label for="isOnlyBanPicks"><b>Only Need Ban & Picks? </b></label>
+					<label for="isOnlyBanPicks"><b id="OnlyBanPicks">Only Need Ban & Picks? </b></label>
 					<input type="checkbox" id="isOnlyBanPicks" class="txtBorder checkbox1">
 
 					<br><br>
-					<label for="ChooseBans"><b>BanNums: </b></label>
+					<label for="ChooseBans"><b id="BanNums">BanNums: </b></label>
 					<select id="ChooseBans" class="txtBorder">
 						<option value="4">4</option>
 						<option value="5" selected>5</option>
 					</select>
 
-					<label for="isGameInProgress"><b>Game in Progress? </b></label>
+					<label for="isGameInProgress"><b id="GameInProgress">Game in Progress? </b></label>
 					<input type="checkbox" id="isGameInProgress" class="txtBorder checkbox2">
 
-					<label for="isNewFormat"><b>New Format? </b></label>
+					<label for="isNewFormat"><b id="NewFormat">New Format? </b></label>
 					<input type="checkbox" id="isNewFormat" class="txtBorder checkbox2" checked>
 
-					<label for="isChangeSide"><b>Change Side? </b></label>
+					<label for="isChangeSide"><b id="ChangeSide">Change Side? </b></label>
 					<input type="checkbox" id="isChangeSide" class="txtBorder checkbox2">
 
 					<br><br>
-					<label for="team1side"><b>Team1Side: </b></label>
+					<label for="team1side"><b id="TeamSide">Team1Side: </b></label>
 					<select id="team1side" name="team1side" class="txtBorder">
-						<option value="blue">Blue</option>
-						<option value="red">Red</option>
+						<option value="blue" id="Blue">Blue</option>
+						<option value="red" id="Red">Red</option>
 					</select>
 
-					<label for="length"><b>Length: </b></label>
+					<label for="length"><b id="Length">Length: </b></label>
 					<label for="minutes"></label>
 					<select id="minutes" class="txtBorder"></select>
 					:
 					<label for="seconds"></label>
 					<select id="seconds" class="txtBorder"></select>
 
-					<label for="winner"><b>Winner: </b></label>
+					<label for="winner"><b id="Winner">Winner: </b></label>
 					<select id="winner" name="winner" class="txtBorder">
-						<option value="1">Team1</option>
-						<option value="2">Team2</option>
+						<option value="1" id="Team1">Team1</option>
+						<option value="2" id="Team2">Team2</option>
 					</select>
 					<br><br>
 				</div>
@@ -71,32 +107,28 @@
 				<br>
 				<div id="outputDiv">
 					<button id="generateButton" class="btn btn-primary">Generate & Copy Output</button>
+					<button id="switchToEnglish" class="btn btn-info">Switch to English</button>
+					<button id="switchToChinese" class="btn btn-info">切换到中文</button>
+					<button id="SearchHeroAlias" class="btn btn-default">Search/Update Hero Alias or Add Hero</button>
 					<button id="clearCookies" class="btn btn-danger">Clear Cookies</button>
+					<button id="RemoveLocalStorage" class="btn btn-danger">Clear LocalStorage</button>
 					<pre id="output" style="display: none;"></pre>
 				</div>
 				<br>
 				<div>
-					Data from Liquipedia <a
-						href="https://liquipedia.net/honorofkings/Module:HeroNames">Module:HeroNames</a> but without
-					Arena of Valor heroes<br>
-					Data source update time: 7/5/2025(diff: 318351)<br>
-					New heroes: Flowborn (Tank), Sun Quan<br>
-					Major update: Updated names for Chang'e, Ao'yin and other heroes's names
+					<span id="Liquipedia"></span> <span id="DataSource"></span><br>
+					<span id="NewHeroes"></span><br>
+					<span id="MajorUpdate"></span>
 				</div>
 				<div>
-					Project address: <a href="https://github.com/EMIYangR/LowCodeEditor">Github</a> with <a
-						href="https://github.com/EMIYangR/LowCodeEditor/blob/master/README.md">README</a>
+					<span id="ProjectAddress"></span>
 				</div>
 				<div>
-					<b>Q: Why is there almost no CSS?</b><br>
-					A: Because I am lazy
+					<b id="Question1"></b><br>
+					<span id="Answer1"></span>
 				</div>
-				<div>
-					<a href="zh-CN/">Chinese</a>
-					<a href="license.html" target="_blank">LICENSE</a>
-				</div>
+				<div> <a href="license.html" target="_blank">LICENSE</a> </div>
 			</div>
-			
 		</div>
 	</div>
 </body>

@@ -1,6 +1,6 @@
 # Low-Code Editor
 
-This Demo implements [***Liquipedia***](https://liquipedia.net/honorofkings/)'s *Ban&Picks* formatting output, which reduces the increased inspection cost caused by output errors and improves certain writing efficiency.
+This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)'s *Ban&Picks* formatting output, which reduces the increased inspection cost caused by output errors and improves certain writing efficiency.
 
 #### Page Effect
 
@@ -18,6 +18,17 @@ This Demo implements [***Liquipedia***](https://liquipedia.net/honorofkings/)'s 
         <!-- Hero bans -->
         |t1b1=agudo|t1b2=agudo|t1b3=agudo|t1b4=agudo|t1b5=agudo
         |t2b1=agudo|t2b2=agudo|t2b3=agudo|t2b4=agudo|t2b5=agudo
+```
+##### Standard Output (New Format)
+
+``` javascript
+        |team1side=blue |team2side=red |length=99:59 |winner=1
+        <!-- Hero picks -->
+        |t1h1=agudo |t1h2=agudo |t1h3=agudo |t1h4=agudo |t1h5=agudo
+        |t2h1=agudo |t2h2=agudo |t2h3=agudo |t2h4=agudo |t2h5=agudo
+        <!-- Hero bans -->
+        |t1b1=agudo |t1b2=agudo |t1b3=agudo |t1b4=agudo |t1b5=agudo
+        |t2b1=agudo |t2b2=agudo |t2b3=agudo |t2b4=agudo |t2b5=agudo
 ```
 
 ##### 5Ban & 5Pick
@@ -110,20 +121,10 @@ The BP input box supports prompt words. This Demo supports most alias prompts fo
 | text  | prompt words       |
 | alias | alias (DIY)        |
 
-You can also replace the corresponding relationships of other games. Maybe you can directly ask the [GPT](https://AI.com/) to obtain the target output in the corresponding format.
-
-``` javascript
-export const dataArray = [
-	//Default null value
-	{ "value": "", "text": "Null","alias":""},
-	//Output example
-	{ "value": "agudo", "text": "Agudo","alias":"aguduo"},
-	{ "value": "agudo", "text": "Agudo","alias":"a gu duo"}
-}
-```
+Currently, this project supports localized custom hero aliases and the addition of new heroes.
 
 If you plan to run it locally, it is recommended to use [Visual Studio Code](https://code.visualstudio.com/)'s **Live Server** plug-in to deploy this Demo. Please understand the inconvenience caused.
 
 #### Finally
 
-Due to the rush of time, this Demo has many shortcomings. Welcome to raise them to me through Issue!
+Due to the rush of time, this Project has many shortcomings. Welcome to raise them to me through Issue!
