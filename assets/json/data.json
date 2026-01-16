@@ -234,11 +234,11 @@
         ]
     },
     {
-        "value": "chi cha",
-        "text": "Chi Cha (蚩奼)",
+        "value": "chicha",
+        "text": "Chicha (蚩奼)",
         "alias": [
-            "chi cha",
-            "chicha"
+            "chicha",
+            "chi cha"
         ]
     },
     {
@@ -270,6 +270,14 @@
             "da qiao",
             "daqiao",
             "dq"
+        ]
+    },
+    {
+        "value": "da yu",
+        "text": "Da Yu (大禹)",
+        "alias": [
+            "da yu",
+            "dayu"
         ]
     },
     {
@@ -617,6 +625,14 @@
         "alias": [
             "lam",
             "lan"
+        ]
+    },
+    {
+        "value": "Lapulapu",
+        "text": "Lapulapu (拉普)",
+        "alias": [
+            "Lapulapu",
+            "lplp"
         ]
     },
     {
