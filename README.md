@@ -113,7 +113,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 #### Using Help
 
-The BP input box supports prompt words. This Demo supports most alias prompts for ***Honor of Kings (including Global services)***. You can also modify them by modifying the ***dataArray*** array of  ***data.js*** . Support setting multiple  ***aliases*** for a hero, and the corresponding values are as follows:
+The BP input box supports prompt words. This Project supports most alias prompts for ***Honor of Kings (including Global services)***. You can also modify them by modifying the ***data.json*** . Support setting multiple  ***aliases*** for a hero, and the corresponding values are as follows:
 
 | name  | value              |
 | ----- | ------------------ |
@@ -123,7 +123,7 @@ The BP input box supports prompt words. This Demo supports most alias prompts fo
 
 Currently, this project supports localized custom hero aliases and the addition of new heroes.
 
-If you plan to run it locally, it is recommended to use [Visual Studio Code](https://code.visualstudio.com/)'s **Live Server** plug-in to deploy this Demo. Please understand the inconvenience caused.
+If you plan to run it locally, it is recommended to use [Visual Studio Code](https://code.visualstudio.com/)'s **Live Server** plug-in to deploy this Project. Please understand the inconvenience caused.
 
 #### Finally
 

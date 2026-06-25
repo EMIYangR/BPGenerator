@@ -31,10 +31,10 @@
 		"SearchHeroAlias": "Search/Update Hero Alias or Add Hero",
 		"RemoveLocalStorage": "Clear LocalStorage",
 		"Liquipedia": "Data source from Liquipedia <a href='https://liquipedia.net/honorofkings/Module:HeroNames'>Module:HeroNames</a> but without Arena of Valor heroes",
-		"DataSource": "update time: 01/10/2026(diff: 354603)",
-		"NewHeroes": "New heroes: lapulapu, Da Yu",
+		"DataSource": "update time: 06/25/2026(diff: 376803)",
+		"NewHeroes": "New heroes: Flowborn (Assassin), Devara, Xinmo Liuer",
 		"MajorUpdate": "Major Update: Fixed some known issues.",
-		"ProjectAddress": "<a href='https://github.com/EMIYangR/LowCodeEditor'>Github</a> with <a href='https://github.com/EMIYangR/LowCodeEditor/blob/master/README.md'>README</a>",
+		"ProjectAddress": "<a href='https://github.com/EMIYangR/BPGenerator'>Github</a> with <a href='https://github.com/EMIYangR/BPGenerator/blob/master/README.md'>README</a>",
 		"Question1": "Q: Why is there almost no CSS?",
 		"Answer1": "A: Because I am lazy"
 	},
@@ -70,10 +70,10 @@
 		"SearchHeroAlias": "搜索/更新英雄别名或添加英雄",
 		"RemoveLocalStorage": "清空本地存储",
 		"Liquipedia": "数据源来自 <a href='https://liquipedia.net/honorofkings/Module:HeroNames'>模块：英雄名称</a> 但不包括传说对决",
-		"DataSource": "更新时间: 01/10/2026(版本号: 354603)",
-		"NewHeroes": "新英雄：拉普、大禹",
+		"DataSource": "更新时间: 06/25/2026(版本号: 376803)",
+		"NewHeroes": "新英雄：元流之子（刺客）、谛梵罗、心魔六耳",
 		"MajorUpdate": "主要更新：修复了一些已知问题。",
-		"ProjectAddress": "<a href='https://github.com/EMIYangR/LowCodeEditor'>Github</a> 以及 <a href='https://github.com/EMIYangR/LowCodeEditor/blob/master/README-zh-CN.md'>自述文件</a>",
+		"ProjectAddress": "<a href='https://github.com/EMIYangR/BPGenerator'>Github</a> 以及 <a href='https://github.com/EMIYangR/BPGenerator/blob/master/README-zh-CN.md'>自述文件</a>",
 		"Question1": "Q: 为什么不写样式? ",
 		"Answer1": "A: 懒"
 	}

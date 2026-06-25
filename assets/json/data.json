@@ -13,6 +13,18 @@
         ]
     },
     {
+        "value": "flowborn (assassin)",
+        "text": "Flowborn (Assassin) (元流之子(刺客))",
+        "alias": [
+            "flowborn (assassin)",
+            "flowborn assassin",
+            "flw assassin",
+            "child of the primal flow assassin",
+            "child assassin",
+            "child of the primal flow (assassin)"
+        ]
+    },
+    {
         "value": "flowborn (mage)",
         "text": "Flowborn (Mage) (元流之子(法师))",
         "alias": [
@@ -288,6 +300,13 @@
         ]
     },
     {
+        "value": "devara",
+        "text": "Devara (谛梵罗)",
+        "alias": [
+            "devara"
+        ]
+    },
+    {
         "value": "dharma",
         "text": "Dharma (达摩)",
         "alias": [
@@ -476,7 +495,7 @@
             "garuda khageswara",
             "khageswara"
         ]
-    },    
+    },
     {
         "value": "ge ya",
         "text": "Ge Ya (戈娅)",
@@ -1077,6 +1096,14 @@
         ]
     },
     {
+        "value": "xinmo liuer",
+        "text": "Xinmo Liuer (心魔六耳)",
+        "alias": [
+            "xinmo liuer",
+            "liuer"
+        ]
+    },
+    {
         "value": "xuance",
         "text": "Xuance (百里玄策)",
         "alias": [
@@ -1089,6 +1116,16 @@
         "text": "Yang Jian (杨戬)",
         "alias": [
             "yang jian"
+        ]
+    },
+    {
+        "value": "yango",
+        "text": "Yango (元歌)",
+        "alias": [
+            "yango",
+            "yuan ge",
+            "yuan song",
+            "yuange"
         ]
     },
     {
@@ -1135,15 +1172,6 @@
             "yi xing",
             "xing",
             "yx"
-        ]
-    },
-    {
-        "value": "yuan ge",
-        "text": "Yuan Ge (元歌)",
-        "alias": [
-            "yuan ge",
-            "yuan song",
-            "yuange"
         ]
     },
     {
