@@ -10,7 +10,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### Standard Output
 
-``` javascript
+``` wikitext
         |team1side=blue|team2side=red|length=99:59|winner=1
         <!-- Hero picks -->
         |t1h1=agudo|t1h2=agudo|t1h3=agudo|t1h4=agudo|t1h5=agudo
@@ -21,7 +21,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 ```
 ##### Standard Output (New Format)
 
-``` javascript
+``` wikitext
         |team1side=blue |team2side=red |length=99:59 |winner=1
         <!-- Hero picks -->
         |t1h1=agudo |t1h2=agudo |t1h3=agudo |t1h4=agudo |t1h5=agudo
@@ -33,7 +33,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### 5Ban & 5Pick
 
-``` javascript
+``` wikitext
         |team1side=blue|team2side=red|length=00:00|winner=1
         <!-- Hero picks -->
         |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
@@ -45,7 +45,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### 4Ban & 5Pick
 
-``` javascript
+``` wikitext
         |team1side=blue|team2side=red|length=00:00|winner=1
         <!-- Hero picks -->
         |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
@@ -57,7 +57,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### Ultimate Battle
 
-``` javascript
+``` wikitext
         |team1side=blue|team2side=red|length=00:00|winner=1
         <!-- Hero picks -->
         |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
@@ -66,7 +66,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### Only Need Picks
 
-```javascript
+```wikitext
         <!-- Hero picks -->
         |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
         |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
@@ -74,7 +74,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### Only Need 4Bans
 
-```javascript
+```wikitext
         <!-- Hero bans -->
         |t1b1=|t1b2=|t1b3=|t1b4=
         |t2b1=|t2b2=|t2b3=|t2b4=
@@ -82,7 +82,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### Only Need 5Bans
 
-```javascript
+```wikitext
         <!-- Hero bans -->
         |t1b1=|t1b2=|t1b3=|t1b4=|t1b5=
         |t2b1=|t2b2=|t2b3=|t2b4=|t2b5=
@@ -90,7 +90,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### Only Need Ban & Picks
 
-```javascript
+```wikitext
         <!-- Hero picks -->
         |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
         |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
@@ -101,7 +101,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 ##### Game in Progress
 
-```javascript
+```wikitext
         |team1side=blue|team2side=red|length=|winner=
         <!-- Hero picks -->
         |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
@@ -113,7 +113,7 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 #### Using Help
 
-The BP input box supports prompt words. This Project supports most alias prompts for ***Honor of Kings (including Global services)***. You can also modify them by modifying the ***data.json*** . Support setting multiple  ***aliases*** for a hero, and the corresponding values are as follows:
+The BP input box supports prompt words. This Project supports most alias prompts for ***Honor of Kings (including Global services)*** . You can also modify them by modifying the ***data.json*** . Support setting multiple  ***aliases*** for a hero, and the corresponding values are as follows:
 
 | name  | value              |
 | ----- | ------------------ |

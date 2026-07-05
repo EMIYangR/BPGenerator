@@ -877,14 +877,14 @@
         ]
     },
     {
-        "value": "toro (honor of kings)",
-        "text": "Toro  (牛魔)",
+        "value": "niumo",
+        "text": "Niumo  (牛魔)",
         "alias": [
+            "niumo",
             "toro (honor of kings)",
             "toro (hok)",
             "toro hok",
-            "torohok",
-            "niumo"
+            "torohok"
         ]
     },
     {
