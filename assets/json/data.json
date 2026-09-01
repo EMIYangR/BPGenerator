@@ -942,12 +942,13 @@
         ]
     },
     {
-        "value": "shieldun",
-        "text": "Shieldun (盾山)",
+        "value": "dunshan",
+        "text": "Dunshan (盾山)",
         "alias": [
-            "shieldun",
+            "dunshan",
             "dun shan",
-            "ds"
+            "ds",
+            "shieldun"
         ]
     },
     {
@@ -1252,6 +1253,15 @@
         ]
     },
     {
+        "value": "annette",
+        "text": "Annette (安奈特)",
+        "alias": [
+            "annette",
+            "annaite",
+            "att"
+        ]
+    },
+    {
         "value": "ata",
         "text": "Ata (阿塔)",
         "alias": [
@@ -1274,6 +1284,22 @@
             "fatih"
         ]
     },
+    {
+        "value": "florentino",
+        "text": "Florentino (弗洛伦)",
+        "alias": [
+            "florentino",
+            "fll"
+        ]
+    },
+    {
+        "value": "lorion",
+        "text": "Lorion (洛里昂)",
+        "alias": [
+            "lorion",
+            "lla"
+        ]
+    },    
     {
         "value": "luara",
         "text": "Luara (卢雅娜)",
