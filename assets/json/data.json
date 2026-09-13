@@ -54,9 +54,10 @@
         ]
     },
     {
-        "value": "flowborn (support)",
-        "text": "Flowborn (Support) (元流之子(辅助))",
+        "value": "flowborn (roamer)",
+        "text": "Flowborn (Roamer) (元流之子(辅助))",
         "alias": [
+            "flowborn (roamer)",
             "flowborn (support)",
             "flowborn support",
             "flw support"

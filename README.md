@@ -126,10 +126,13 @@ The BP input box supports prompt words. This Project supports most alias prompts
 
 ##### Update Online
 **Search and Update**
+
 Just create a new line and add the alias you need
+
 ![Search and Update](images/02.png)
 
 **Add**
+
 ![Add](images/03.png)
 
 
