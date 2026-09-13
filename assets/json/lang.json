@@ -31,12 +31,13 @@
 		"SearchHeroAlias": "Search/Update Hero Alias or Add Hero",
 		"RemoveLocalStorage": "Clear LocalStorage",
 		"Liquipedia": "Data source from Liquipedia <a href='https://liquipedia.net/honorofkings/Module:HeroNames'>Module:HeroNames</a> but without Arena of Valor heroes",
-		"DataSource": "update time: 06/25/2026(diff: 376803)",
-		"NewHeroes": "New heroes: Flowborn (Assassin), Devara, Xinmo Liuer",
+		"DataSource": "update time: 09/07/2026(diff: 388681)",
+		"NewHeroes": "New heroes: Annette, Florentino, Lorion, Wang Wei",
 		"MajorUpdate": "Major Update: Fixed some known issues.",
 		"ProjectAddress": "<a href='https://github.com/EMIYangR/BPGenerator'>Github</a> with <a href='https://github.com/EMIYangR/BPGenerator/blob/master/README.md'>README</a>",
-		"Question1": "Q: Why is there almost no CSS?",
-		"Answer1": "A: Because I am lazy"
+		"Question": "Q: Why is there almost no CSS?",
+		"Answer": "A: Because I am lazy",
+		"Note":"Note: If the push results conflict with your local results, please manually change or reset them."
 	},
 	"zh": {
 		"SearchHeroAlies": "查询英雄别名",
@@ -70,11 +71,12 @@
 		"SearchHeroAlias": "搜索/更新英雄别名或添加英雄",
 		"RemoveLocalStorage": "清空本地存储",
 		"Liquipedia": "数据源来自 <a href='https://liquipedia.net/honorofkings/Module:HeroNames'>模块：英雄名称</a> 但不包括传说对决",
-		"DataSource": "更新时间: 06/25/2026(版本号: 376803)",
-		"NewHeroes": "新英雄：元流之子（刺客）、谛梵罗、心魔六耳",
+		"DataSource": "更新时间: 09/07/2026(版本号: 388681)",
+		"NewHeroes": "新英雄：安奈特、弗洛伦、洛里昂、王维",
 		"MajorUpdate": "主要更新：修复了一些已知问题。",
 		"ProjectAddress": "<a href='https://github.com/EMIYangR/BPGenerator'>Github</a> 以及 <a href='https://github.com/EMIYangR/BPGenerator/blob/master/README-zh-CN.md'>自述文件</a>",
-		"Question1": "Q: 为什么不写样式? ",
-		"Answer1": "A: 懒"
+		"Question": "Q: 为什么不写样式? ",
+		"Answer": "A: 懒",
+		"Note":"Note: 如果推送结果与您的本地化结果冲突，请手动更改或者重置。"
 	}
 }

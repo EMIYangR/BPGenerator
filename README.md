@@ -8,25 +8,25 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 
 #### Output effect
 
-##### Standard Output
+##### Standard Output (Deprecated)
 
 ``` wikitext
         |team1side=blue|team2side=red|length=99:59|winner=1
         <!-- Hero picks -->
         |t1h1=agudo|t1h2=agudo|t1h3=agudo|t1h4=agudo|t1h5=agudo
         |t2h1=agudo|t2h2=agudo|t2h3=agudo|t2h4=agudo|t2h5=agudo
-        <!-- Hero bans -->
+        <!-- Hero bans-->
         |t1b1=agudo|t1b2=agudo|t1b3=agudo|t1b4=agudo|t1b5=agudo
         |t2b1=agudo|t2b2=agudo|t2b3=agudo|t2b4=agudo|t2b5=agudo
 ```
-##### Standard Output (New Format)
+##### Standard Output
 
 ``` wikitext
         |team1side=blue |team2side=red |length=99:59 |winner=1
         <!-- Hero picks -->
         |t1h1=agudo |t1h2=agudo |t1h3=agudo |t1h4=agudo |t1h5=agudo
         |t2h1=agudo |t2h2=agudo |t2h3=agudo |t2h4=agudo |t2h5=agudo
-        <!-- Hero bans -->
+        <!-- Hero bans-->
         |t1b1=agudo |t1b2=agudo |t1b3=agudo |t1b4=agudo |t1b5=agudo
         |t2b1=agudo |t2b2=agudo |t2b3=agudo |t2b4=agudo |t2b5=agudo
 ```
@@ -34,84 +34,87 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 ##### 5Ban & 5Pick
 
 ``` wikitext
-        |team1side=blue|team2side=red|length=00:00|winner=1
+        |team1side=blue |team2side=red |length=00:00 |winner=1
         <!-- Hero picks -->
-        |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
-        |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
-        <!-- Hero bans -->
-        |t1b1=|t1b2=|t1b3=|t1b4=|t1b5=
-        |t2b1=|t2b2=|t2b3=|t2b4=|t2b5=
+        |t1h1= |t1h2= |t1h3= |t1h4= |t1h5=
+        |t2h1= |t2h2= |t2h3= |t2h4= |t2h5=
+        <!-- Hero bans-->
+        |t1b1= |t1b2= |t1b3= |t1b4= |t1b5=
+        |t2b1= |t2b2= |t2b3= |t2b4= |t2b5=
 ```
 
 ##### 4Ban & 5Pick
 
 ``` wikitext
-        |team1side=blue|team2side=red|length=00:00|winner=1
+        |team1side=blue |team2side=red |length=00:00 |winner=1
         <!-- Hero picks -->
-        |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
-        |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
-        <!-- Hero bans -->
-        |t1b1=|t1b2=|t1b3=|t1b4=
-        |t2b1=|t2b2=|t2b3=|t2b4=
+        |t1h1= |t1h2= |t1h3= |t1h4= |t1h5=
+        |t2h1= |t2h2= |t2h3= |t2h4= |t2h5=
+        <!-- Hero bans-->
+        |t1b1= |t1b2= |t1b3= |t1b4=
+        |t2b1= |t2b2= |t2b3= |t2b4=
 ```
 
 ##### Ultimate Battle
 
 ``` wikitext
-        |team1side=blue|team2side=red|length=00:00|winner=1
+        |team1side=blue |team2side=red |length=00:00 |winner=1
         <!-- Hero picks -->
-        |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
-        |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
+        |t1h1= |t1h2= |t1h3= |t1h4= |t1h5=
+        |t2h1= |t2h2= |t2h3= |t2h4= |t2h5=
 ```
 
 ##### Only Need Picks
 
 ```wikitext
         <!-- Hero picks -->
-        |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
-        |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
+        |t1h1= |t1h2= |t1h3= |t1h4= |t1h5=
+        |t2h1= |t2h2= |t2h3= |t2h4= |t2h5=
 ```
 
 ##### Only Need 4Bans
 
 ```wikitext
-        <!-- Hero bans -->
-        |t1b1=|t1b2=|t1b3=|t1b4=
-        |t2b1=|t2b2=|t2b3=|t2b4=
+        <!-- Hero bans-->
+        |t1b1= |t1b2= |t1b3= |t1b4=
+        |t2b1= |t2b2= |t2b3= |t2b4=
 ```
 
 ##### Only Need 5Bans
 
 ```wikitext
-        <!-- Hero bans -->
-        |t1b1=|t1b2=|t1b3=|t1b4=|t1b5=
-        |t2b1=|t2b2=|t2b3=|t2b4=|t2b5=
+        <!-- Hero bans-->
+        |t1b1= |t1b2= |t1b3= |t1b4= |t1b5=
+        |t2b1= |t2b2= |t2b3= |t2b4= |t2b5=
 ```
 
 ##### Only Need Ban & Picks
 
 ```wikitext
         <!-- Hero picks -->
-        |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
-        |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
-        <!-- Hero bans -->
-        |t1b1=|t1b2=|t1b3=|t1b4=|t1b5=
-        |t2b1=|t2b2=|t2b3=|t2b4=|t2b5=
+        |t1h1= |t1h2= |t1h3= |t1h4= |t1h5=
+        |t2h1= |t2h2= |t2h3= |t2h4= |t2h5=
+        <!-- Hero bans-->
+        |t1b1= |t1b2= |t1b3= |t1b4= |t1b5=
+        |t2b1= |t2b2= |t2b3= |t2b4= |t2b5=
 ```
 
 ##### Game in Progress
 
 ```wikitext
-        |team1side=blue|team2side=red|length=|winner=
+        |team1side=blue |team2side=red |length= |winner=
         <!-- Hero picks -->
-        |t1h1=|t1h2=|t1h3=|t1h4=|t1h5=
-        |t2h1=|t2h2=|t2h3=|t2h4=|t2h5=
-        <!-- Hero bans -->
-        |t1b1=|t1b2=|t1b3=|t1b4=|t1b5=
-        |t2b1=|t2b2=|t2b3=|t2b4=|t2b5=
+        |t1h1= |t1h2= |t1h3= |t1h4= |t1h5=
+        |t2h1= |t2h2= |t2h3= |t2h4= |t2h5=
+        <!-- Hero bans-->
+        |t1b1= |t1b2= |t1b3= |t1b4= |t1b5=
+        |t2b1= |t2b2= |t2b3= |t2b4= |t2b5=
 ```
 
 #### Using Help
+
+##### Locally
+It is recommended to use [Visual Studio Code](https://code.visualstudio.com/)'s **Live Server** plug-in to deploy this Project. Please understand the inconvenience caused.
 
 The BP input box supports prompt words. This Project supports most alias prompts for ***Honor of Kings (including Global services)*** . You can also modify them by modifying the ***data.json*** . Support setting multiple  ***aliases*** for a hero, and the corresponding values are as follows:
 
@@ -121,9 +124,14 @@ The BP input box supports prompt words. This Project supports most alias prompts
 | text  | prompt words       |
 | alias | alias (DIY)        |
 
-Currently, this project supports localized custom hero aliases and the addition of new heroes.
+##### Update Online
+**Search and Update**
+Just create a new line and add the alias you need
+![Search and Update](images/02.png)
 
-If you plan to run it locally, it is recommended to use [Visual Studio Code](https://code.visualstudio.com/)'s **Live Server** plug-in to deploy this Project. Please understand the inconvenience caused.
+**Add**
+![Add](images/03.png)
+
 
 #### Finally
 

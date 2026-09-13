@@ -76,32 +76,22 @@
 					<label for="isGameInProgress"><b id="GameInProgress">Game in Progress? </b></label>
 					<input type="checkbox" id="isGameInProgress" class="txtBorder checkbox2">
 
-					<label for="isNewFormat"><b id="NewFormat">New Format? </b></label>
-					<input type="checkbox" id="isNewFormat" class="txtBorder checkbox2" checked>
-
 					<label for="isChangeSide"><b id="ChangeSide">Change Side? </b></label>
 					<input type="checkbox" id="isChangeSide" class="txtBorder checkbox2">
 
 					<br><br>
 					<label for="team1side"><b id="TeamSide">Team1Side: </b></label>
 					<!-- <input type="button" value="" id="team1side"> -->
-					<select id="team1side" name="team1side" class="txtBorder">
-						<option value="blue" id="Blue">Blue</option>
-						<option value="red" id="Red">Red</option>
-					</select>
+					<button type="button" id="team1side" name="team1side" class="txtBorder toggleButton" value="blue">Blue</button>
 
-					<label for="length"><b id="Length">Length: </b></label>
-					<label for="minutes"></label>
-					<select id="minutes" class="txtBorder"></select>
+					<label for="minutes"><b id="Length">Length: </b></label>
+					<input type="text" id="minutes" class="txtBorder timeInput" placeholder="MM" maxlength="2" autocomplete="off">
 					:
 					<label for="seconds"></label>
-					<select id="seconds" class="txtBorder"></select>
+					<input type="text" id="seconds" class="txtBorder timeInput" placeholder="SS" maxlength="2" autocomplete="off">
 
 					<label for="winner"><b id="Winner">Winner: </b></label>
-					<select id="winner" name="winner" class="txtBorder">
-						<option value="1" id="Team1">Team1</option>
-						<option value="2" id="Team2">Team2</option>
-					</select>
+					<button type="button" id="winner" name="winner" class="txtBorder toggleButton" value="1">Team1</button>
 					<br><br>
 				</div>
 				<div id="inputs-container"></div>
@@ -125,8 +115,9 @@
 					<span id="ProjectAddress"></span>
 				</div>
 				<div>
-					<b id="Question1"></b><br>
-					<span id="Answer1"></span>
+					<b id="Question"></b><br>
+					<span id="Answer"></span><br>
+					<!-- <b id="Note"></b> -->
 				</div>
 				<div> <a href="license.html" target="_blank">LICENSE</a> </div>
 			</div>
