@@ -1,6 +1,569 @@
-@font-face{font-family:'思源屏显臻宋 CN';src:url(../fonts/SourceHanSerifCNforDisplay.ttf) format('truetype')}
-@font-face{font-family:'Open Sans Regular';src:url(../fonts/OpenSans-Regular.ttf) format('truetype')}
-@font-face{font-family:'Open Sans Bold';src:url(../fonts/OpenSans-Bold.ttf) format('truetype')}
-*{font-family:"Open Sans Regular","思源屏显臻宋 CN",sans-serif;margin:auto;padding:0;-ms-user-select:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5)}.modal-content{background-color:white;margin:10% auto;padding:20px;border-radius:5px;width:400px;max-width:90%;position:relative}.close{position:absolute;right:15px;top:10px;font-size:1.5rem;cursor:pointer}.modalSpan{display:inline-block;width:80px;text-align:right;margin-right:10px}.modal .txtBorder{margin:2px 0}.autocomplete-suggestions{border:1px solid #ccc;max-height:150px;overflow-y:auto;position:absolute;background:white;z-index:999;width:auto;box-sizing:border-box}.suggestion-item{padding:8px;cursor:pointer}.suggestion-item:hover{background-color:#f0f0f0}.highlighted{background-color:#ddd}.autocomplete-suggestions{max-height:200px;overflow-y:auto;border:1px solid #ccc;background-color:white}.txtBorder{padding:3px;border-color:rgb(145,17,191);border-radius:.3rem;line-height:25px;font-size:medium}.txtLine{margin:5px}.LineB{display:block}
- @media (orientation:landscape){#content{margin:30px 15px 25px 25px}}@media (orientation:portrait){#content{margin:20px 5px 25px 25px}#HeroNamesSelect{width:100%}}
- button.txtBorder{width:72px;cursor:pointer;font-weight:bold} .timeInput{width:45px;text-align:center}
+@font-face {
+	font-family: 'SourceHanSerifCNforDisplay';
+	src: url(../fonts/SourceHanSerifCNforDisplay.ttf) format('truetype');
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Open Sans Regular';
+	src: url(../fonts/OpenSans-Regular.ttf) format('truetype');
+	font-display: swap;
+}
+
+:root {
+	--bg: #f4f3f0;
+	--panel: #ffffff;
+	--ink: #23262b;
+	--muted: #6d7176;
+	--line: #d8d5ce;
+	--line-strong: #c2beb6;
+	--accent: #7d1a99;
+	--accent-dark: #671480;
+	--accent-soft: #f0e8f5;
+	--danger: #9b3a34;
+	--radius: 4px;
+}
+
+/* 中文界面：拉丁字形仍用 Open Sans，中文字形用思源屏显臻宋，其后才是系统字体 */
+body.lang-zh {
+	font-family: "Open Sans Regular", "SourceHanSerifCNforDisplay",
+		"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: var(--bg);
+	color: var(--ink);
+	font-family: "Open Sans Regular", -apple-system, BlinkMacSystemFont, "Segoe UI",
+		"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+	font-size: 13px;
+	line-height: 1.55;
+	-webkit-font-smoothing: antialiased;
+}
+
+#container {
+	max-width: 980px;
+	margin: 0 auto;
+	padding: 24px 16px 40px;
+}
+
+#content {
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	padding: 20px 22px;
+}
+
+/* ---------- 工具栏 ---------- */
+
+.control-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 16px;
+	margin-bottom: 10px;
+}
+
+.control-row:last-child {
+	margin-bottom: 0;
+}
+
+#titleDiv label,
+.mode-switch label {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	margin: 0;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+#titleDiv b {
+	font-weight: 500;
+}
+
+input[type="checkbox"] {
+	width: 14px;
+	height: 14px;
+	margin: 0;
+	accent-color: var(--accent);
+	vertical-align: -2px;
+	cursor: pointer;
+}
+
+/* ---------- 表单控件 ---------- */
+
+input[type="text"],
+select,
+textarea {
+	font: inherit;
+	color: inherit;
+	background: #fff;
+	border: 1px solid var(--line-strong);
+	border-radius: 3px;
+	padding: 3px 6px;
+	height: 28px;
+	line-height: 20px;
+}
+
+textarea {
+	height: auto;
+	min-height: 72px;
+	line-height: 1.5;
+	resize: vertical;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.txtBorder {
+	border: 1px solid var(--line-strong);
+	border-radius: 3px;
+}
+
+.field-label {
+	color: var(--muted);
+	white-space: nowrap;
+}
+
+.timeInput {
+	width: 40px;
+	padding: 3px 2px;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+
+.time-sep {
+	color: var(--muted);
+	margin: 0 -8px;
+}
+
+/* ---------- 按钮 ---------- */
+
+.btn,
+.toggleButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 28px;
+	padding: 0 12px;
+	border: 1px solid var(--line-strong);
+	border-radius: 3px;
+	background: #fff;
+	color: var(--ink);
+	font: inherit;
+	font-size: 13px;
+	line-height: 1;
+	cursor: pointer;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.btn:hover,
+.toggleButton:hover {
+	background: #f2f0ec;
+	color: var(--ink);
+}
+
+.btn:active,
+.toggleButton:active {
+	background: #eae7e1;
+	color: var(--ink);
+}
+
+.btn:focus,
+.toggleButton:focus {
+	color: var(--ink);
+}
+
+.btn:focus-visible,
+.toggleButton:focus-visible {
+	outline: 2px solid #b98ccb;
+	outline-offset: 1px;
+	box-shadow: none;
+}
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+	color: #fff;
+}
+
+.btn-primary {
+	background: var(--accent);
+	border-color: var(--accent);
+}
+
+.btn-primary:hover {
+	background: var(--accent-dark);
+	border-color: var(--accent-dark);
+}
+
+.btn-primary:active {
+	background: #5a106f;
+	border-color: #5a106f;
+}
+
+.btn-danger,
+.btn-danger:focus,
+.btn-danger:active {
+	background: #fff;
+	border-color: #cdb7b4;
+	color: var(--danger);
+}
+
+.btn-danger:hover {
+	background: #fbf2f1;
+	border-color: #b89995;
+	color: #822d28;
+}
+
+.toggleButton {
+	width: 76px;
+	font-weight: 500;
+}
+
+#team1side[data-side="blue"] {
+	background: #2f6fa8;
+	border-color: #2f6fa8;
+	color: #fff;
+}
+
+#team1side[data-side="blue"]:hover {
+	background: #27608f;
+	border-color: #27608f;
+	color: #fff;
+}
+
+#team1side[data-side="blue"]:active {
+	background: #214f77;
+	border-color: #214f77;
+	color: #fff;
+}
+
+#team1side[data-side="red"] {
+	background: #a8443c;
+	border-color: #a8443c;
+	color: #fff;
+}
+
+#team1side[data-side="red"]:hover {
+	background: #933a33;
+	border-color: #933a33;
+	color: #fff;
+}
+
+#team1side[data-side="red"]:active {
+	background: #7f322c;
+	border-color: #7f322c;
+	color: #fff;
+}
+
+/* ---------- 英雄输入区 ---------- */
+
+#inputs-container {
+	margin-top: 16px;
+}
+
+.bp-group {
+	margin-bottom: 12px;
+}
+
+.bp-label {
+	display: block;
+	margin-bottom: 4px;
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--muted);
+}
+
+.bp-row {
+	display: flex;
+	gap: 6px;
+}
+
+.bp-row input {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.bp-row input.is-invalid {
+	border-color: #b5504a;
+	background: #fdf7f7;
+}
+
+.bp-row input.is-ambiguous {
+	border-color: #b8862f;
+	background: #fdfaf0;
+}
+
+.bp-row input.is-duplicate {
+	border-color: var(--accent);
+	background: var(--accent-soft);
+}
+
+.field-hint {
+	margin: 8px 0 0;
+	font-size: 12px;
+	line-height: 1.5;
+	color: var(--danger);
+}
+
+.field-hint[hidden] {
+	display: none;
+}
+
+/* ---------- 补全列表 ---------- */
+
+.autocomplete-suggestions {
+	position: absolute;
+	z-index: 900;
+	max-height: 220px;
+	overflow-y: auto;
+	background: #fff;
+	border: 1px solid var(--line-strong);
+	border-radius: 3px;
+	font-size: 13px;
+}
+
+.suggestion-item {
+	padding: 4px 8px;
+	cursor: pointer;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.suggestion-item:hover {
+	background: #f4f2ee;
+}
+
+.suggestion-item.highlighted {
+	background: var(--accent-soft);
+	color: #4d105e;
+}
+
+/* ---------- 输出 ---------- */
+
+#outputDiv {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-top: 16px;
+}
+
+#actionStatus {
+	font-size: 12px;
+	color: var(--muted);
+}
+
+/* ---------- 使用指南 ---------- */
+
+.guide {
+	margin-top: 16px;
+	padding-top: 10px;
+	border-top: 1px solid var(--line);
+	font-size: 12px;
+	color: var(--muted);
+}
+
+.guide summary {
+	cursor: pointer;
+	color: var(--ink);
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.guide summary::marker {
+	color: var(--muted);
+}
+
+.guide-steps {
+	margin: 8px 0 0;
+	padding-left: 20px;
+}
+
+.guide-steps li {
+	margin-bottom: 4px;
+	line-height: 1.65;
+}
+
+.guide-steps b {
+	color: var(--ink);
+	font-weight: 500;
+}
+
+.guide code {
+	padding: 0 3px;
+	background: #f4f2ee;
+	border-radius: 2px;
+	font-family: ui-monospace, Consolas, monospace;
+	font-size: 11.5px;
+}
+
+/* ---------- 页脚信息 ---------- */
+
+#meta {
+	margin-top: 18px;
+	padding-top: 12px;
+	border-top: 1px solid var(--line);
+	color: var(--muted);
+	font-size: 12px;
+	line-height: 1.8;
+}
+
+#meta b {
+	font-weight: 500;
+	color: var(--ink);
+}
+
+#meta a {
+	color: var(--accent);
+	text-decoration: none;
+}
+
+#meta a:hover {
+	text-decoration: underline;
+}
+
+/* ---------- 弹窗 ---------- */
+
+.modal {
+	display: none;
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	inset: 0;
+	z-index: 1000;
+	padding: 20px;
+	background: rgba(35, 32, 29, 0.42);
+	align-items: center;
+	justify-content: center;
+}
+
+.modal.is-open {
+	display: flex;
+}
+
+.modal-content {
+	position: relative;
+	width: 430px;
+	max-width: 100%;
+	max-height: 85vh;
+	overflow: auto;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+}
+
+.modal-content h3 {
+	margin: 0 0 12px;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.close {
+	position: absolute;
+	top: 6px;
+	right: 10px;
+	padding: 2px 4px;
+	border: 0;
+	background: none;
+	color: var(--muted);
+	font-size: 20px;
+	line-height: 1;
+	opacity: 1;
+	cursor: pointer;
+}
+
+.close:hover {
+	color: var(--ink);
+}
+
+.mode-switch {
+	display: flex;
+	gap: 18px;
+	margin-bottom: 14px;
+}
+
+.modalSpan {
+	display: inline-block;
+	width: 78px;
+	margin-right: 8px;
+	color: var(--muted);
+	vertical-align: middle;
+}
+
+.field {
+	display: flex;
+	align-items: flex-start;
+	margin-bottom: 8px;
+}
+
+.field input,
+.field textarea {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+#HeroNamesSelect,
+#showHeroAlies {
+	width: 100%;
+}
+
+#showHeroAlies {
+	min-height: 64px;
+}
+
+.modal-actions {
+	display: flex;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 720px) {
+	#container {
+		padding: 12px 8px 28px;
+	}
+
+	#content {
+		padding: 14px;
+	}
+
+	.bp-row {
+		flex-wrap: wrap;
+	}
+
+	.bp-row input {
+		flex: 1 1 46%;
+	}
+
+	.control-row {
+		gap: 6px 10px;
+	}
+
+	#outputDiv .btn {
+		flex: 1 1 auto;
+	}
+}

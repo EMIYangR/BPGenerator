@@ -9,118 +9,152 @@
 	<link rel="stylesheet" href="assets/css/index.css">
 	<script src="assets/js/jquery-3.6.0.min.js"></script>
 	<script src="assets/js/js.cookie.min.js"></script>
+	<script src="assets/js/hero-store.js"></script>
+	<script src="assets/js/i18n.js"></script>
+	<script src="assets/js/output-builder.js"></script>
+	<script src="assets/js/autocomplete.js"></script>
 	<script src="assets/js/index.js"></script>
 	<title>BP Generator for Liquipedia HoK Wiki</title>
 </head>
 
 <body>
-	<div id="Modal" class="modal" style="display:none;">
+	<div id="Modal" class="modal" role="dialog" aria-modal="true">
 		<div class="modal-content">
-			<span class="close">×</span>
-			<div>
+			<button type="button" class="close" aria-label="Close">&times;</button>
+
+			<div class="mode-switch">
 				<label>
 					<input type="radio" name="mode" value="search" checked>
-					<span id="SearchHeroAlies">Search Hero Alias</span>
+					<span id="SearchHeroAlies" data-i18n="SearchHeroAlies">Search Hero Alias</span>
 				</label>
 				<label>
 					<input type="radio" name="mode" value="add">
-					<span id="AddHeroAlies">Add Hero</span>
+					<span id="AddHeroAlies" data-i18n="AddHeroAlies">Add Hero</span>
 				</label>
 			</div>
+
 			<div id="Search">
-				<h3 id="SearchHero">Search/Update Hero Alias</h3>
+				<h3 id="SearchHero" data-i18n="SearchHero">Search/Update Hero Alias</h3>
 				<select id="HeroNamesSelect" class="txtBorder">
-					<option value="" id="HeroNames">HeroNames</option>
-				</select><br>
-				<textarea name="showHeroAlies" id="showHeroAlies" class="txtBorder"
-					style="width:188px;height: 38.6px;"></textarea><br>
-				<button id="updateAliasButton" class="btn btn-info">Update</button>
-				<button id="DeleteHeroButton" class="btn btn-danger">Delete</button>
+					<option value="" id="HeroNames" data-i18n="HeroNames">HeroNames</option>
+				</select>
+				<textarea id="showHeroAlies" class="txtBorder" spellcheck="false"></textarea>
+				<div class="modal-actions">
+					<button id="updateAliasButton" class="btn" data-i18n="updateAliasButton">Update</button>
+					<button id="DeleteHeroButton" class="btn btn-danger" data-i18n="DeleteHeroButton">Delete</button>
+				</div>
 			</div>
+
 			<div id="Add" style="display:none;">
-				<h3 id="AddHero">Add Hero</h3>
-				<span id="HeroName" class="modalSpan">Hero Name </span>
-				<input type="text" id="newHeroName" class="txtBorder" placeholder=""><br>
-				<span id="HeroValue" class="modalSpan">Hero Value</span>
-				<input type="text" id="newHeroValue" class="txtBorder" placeholder=""><br>
-				<span id="HeroAlias" class="modalSpan">Hero Alias</span>
-				<textarea type="text" id="newHeroAlias" class="txtBorder" placeholder=""></textarea><br>
-				<span class="modalSpan"></span>
-				<button id="insertAliasButton" class="btn btn-info">Insert</button>
+				<h3 id="AddHero" data-i18n="AddHero">Add Hero</h3>
+				<div class="field">
+					<span id="HeroName" class="modalSpan" data-i18n="HeroName">Hero Name</span>
+					<input type="text" id="newHeroName" class="txtBorder" autocomplete="off">
+				</div>
+				<div class="field">
+					<span id="HeroValue" class="modalSpan" data-i18n="HeroValue">Hero Value</span>
+					<input type="text" id="newHeroValue" class="txtBorder" autocomplete="off">
+				</div>
+				<div class="field">
+					<span id="HeroAlias" class="modalSpan" data-i18n="HeroAlias">Hero Alias</span>
+					<textarea id="newHeroAlias" class="txtBorder" spellcheck="false"></textarea>
+				</div>
+				<div class="modal-actions">
+					<button id="insertAliasButton" class="btn" data-i18n="insertAliasButton">Insert</button>
+				</div>
 			</div>
 		</div>
 	</div>
+
 	<div id="container">
 		<div id="content">
 			<div id="tool">
 				<div id="titleDiv">
-					<label for="isUltimateBattle"><b id="UltimateBattle">Ultimate Battle? </b></label>
-					<input type="checkbox" id="isUltimateBattle" class="txtBorder checkbox1">
+					<div class="control-row">
+						<label>
+							<input type="checkbox" id="isUltimateBattle" class="mode-check">
+							<b id="UltimateBattle" data-i18n="UltimateBattle">Ultimate Battle?</b>
+						</label>
+						<label>
+							<input type="checkbox" id="isOnlyBans" class="mode-check">
+							<b id="OnlyBans" data-i18n="OnlyBans">Only Need Bans?</b>
+						</label>
+						<label>
+							<input type="checkbox" id="isOnlyPicks" class="mode-check">
+							<b id="OnlyPicks" data-i18n="OnlyPicks">Only Need Picks?</b>
+						</label>
+						<label>
+							<input type="checkbox" id="isOnlyBanPicks" class="mode-check">
+							<b id="OnlyBanPicks" data-i18n="OnlyBanPicks">Only Need Ban &amp; Picks?</b>
+						</label>
+					</div>
 
-					<label for="isOnlyBans"><b id="OnlyBans">Only Need Bans? </b></label>
-					<input type="checkbox" id="isOnlyBans" class="txtBorder checkbox1">
+					<div class="control-row">
+						<label for="ChooseBans"><b id="BanNums" data-i18n="BanNums">BanNums:</b></label>
+						<select id="ChooseBans" class="txtBorder">
+							<option value="4">4</option>
+							<option value="5" selected>5</option>
+						</select>
+						<label>
+							<input type="checkbox" id="isGameInProgress">
+							<b id="GameInProgress" data-i18n="GameInProgress">Game in Progress?</b>
+						</label>
+						<label>
+							<input type="checkbox" id="isChangeSide">
+							<b id="ChangeSide" data-i18n="ChangeSide">Change Side?</b>
+						</label>
+					</div>
 
-					<label for="isOnlyPicks"><b id="OnlyPicks">Only Need Picks? </b></label>
-					<input type="checkbox" id="isOnlyPicks" class="txtBorder checkbox1">
+					<div class="control-row">
+						<span id="TeamSide" class="field-label" data-i18n="TeamSide">Team1Side:</span>
+						<button type="button" id="team1side" name="team1side" class="toggleButton" data-side="blue" value="blue">Blue</button>
 
-					<label for="isOnlyBanPicks"><b id="OnlyBanPicks">Only Need Ban & Picks? </b></label>
-					<input type="checkbox" id="isOnlyBanPicks" class="txtBorder checkbox1">
+						<label for="minutes" id="Length" class="field-label" data-i18n="Length">Length:</label>
+						<input type="text" id="minutes" class="txtBorder timeInput" placeholder="MM" maxlength="2" autocomplete="off">
+						<span class="time-sep">:</span>
+						<input type="text" id="seconds" class="txtBorder timeInput" placeholder="SS" maxlength="2" autocomplete="off">
 
-					<br><br>
-					<label for="ChooseBans"><b id="BanNums">BanNums: </b></label>
-					<select id="ChooseBans" class="txtBorder">
-						<option value="4">4</option>
-						<option value="5" selected>5</option>
-					</select>
-
-					<label for="isGameInProgress"><b id="GameInProgress">Game in Progress? </b></label>
-					<input type="checkbox" id="isGameInProgress" class="txtBorder checkbox2">
-
-					<label for="isChangeSide"><b id="ChangeSide">Change Side? </b></label>
-					<input type="checkbox" id="isChangeSide" class="txtBorder checkbox2">
-
-					<br><br>
-					<label for="team1side"><b id="TeamSide">Team1Side: </b></label>
-					<!-- <input type="button" value="" id="team1side"> -->
-					<button type="button" id="team1side" name="team1side" class="txtBorder toggleButton" value="blue">Blue</button>
-
-					<label for="minutes"><b id="Length">Length: </b></label>
-					<input type="text" id="minutes" class="txtBorder timeInput" placeholder="MM" maxlength="2" autocomplete="off">
-					:
-					<label for="seconds"></label>
-					<input type="text" id="seconds" class="txtBorder timeInput" placeholder="SS" maxlength="2" autocomplete="off">
-
-					<label for="winner"><b id="Winner">Winner: </b></label>
-					<button type="button" id="winner" name="winner" class="txtBorder toggleButton" value="1">Team1</button>
-					<br><br>
+						<span id="Winner" class="field-label" data-i18n="Winner">Winner:</span>
+						<button type="button" id="winner" name="winner" class="toggleButton" value="1">Team1</button>
+					</div>
 				</div>
+
 				<div id="inputs-container"></div>
-				<br>
+				<p id="duplicateHint" class="field-hint" role="status" aria-live="polite" hidden></p>
+
 				<div id="outputDiv">
-					<button id="generateButton" class="btn btn-primary">Generate & Copy Output</button>
-					<button id="switchToEnglish" class="btn btn-info">Switch to English</button>
-					<button id="switchToChinese" class="btn btn-info">切换到中文</button>
-					<button id="SearchHeroAlias" class="btn btn-default">Search/Update Hero Alias or Add Hero</button>
-					<button id="clearCookies" class="btn btn-danger">Clear Cookies</button>
-					<button id="RemoveLocalStorage" class="btn btn-danger">Clear LocalStorage</button>
-					<pre id="output" style="display: none;"></pre>
+					<button id="generateButton" class="btn btn-primary" data-i18n="generateButton">Generate &amp; Copy Output</button>
+					<button id="switchToEnglish" class="btn">Switch to English</button>
+					<button id="switchToChinese" class="btn">切换到中文</button>
+					<button id="SearchHeroAlias" class="btn" data-i18n="SearchHeroAlias">Search/Update Hero Alias or Add Hero</button>
+					<button id="clearCookies" class="btn btn-danger" data-i18n="clearCookies">Clear Cookies</button>
+					<button id="RemoveLocalStorage" class="btn btn-danger" data-i18n="RemoveLocalStorage">Clear LocalStorage</button>
+					<span id="actionStatus" role="status" aria-live="polite"></span>
 				</div>
-				<br>
-				<div>
-					<span id="Liquipedia"></span><br>
-					<span id="DataSource"></span><br>
-					<span id="NewHeroes"></span><br>
-					<span id="MajorUpdate"></span>
+
+				<details id="guide" class="guide">
+					<summary data-i18n="guideTitle">Usage guide</summary>
+					<ol class="guide-steps">
+						<li data-i18n="guideStep1"><b>Mode</b> — the four checkboxes are mutually exclusive. Leave all unchecked for a full result.</li>
+						<li data-i18n="guideStep2"><b>Match info</b> — set BanNums (4 or 5), tick Game in Progress to leave length and winner blank, and tick Change Side to swap the two teams' input blocks.</li>
+						<li data-i18n="guideStep3"><b>Side and winner</b> — click Team1Side to toggle blue/red; Team2 takes the opposite side automatically. Click Winner to toggle Team1/Team2.</li>
+						<li data-i18n="guideStep4"><b>Length</b> — MM and SS accept digits only and are padded on blur; leaving them empty produces 00:00.</li>
+						<li data-i18n="guideStep5"><b>Heroes</b> — type a full name or an alias and pick from the list. A red border means no match, a yellow border means several matches, and a hero filled into more than one box is highlighted.</li>
+						<li data-i18n="guideStep6"><b>Keyboard</b> — Tab and Shift+Tab move between inputs and buttons; ↑ / ↓ move through the suggestion list; Enter confirms the highlighted entry; Esc closes the list.</li>
+						<li data-i18n="guideStep7"><b>Alias management</b> — edit aliases, add or delete heroes via “Search/Update Hero Alias or Add Hero”. Changes stay in this browser and merge with updated data.json automatically; use Clear LocalStorage to reset.</li>
+					</ol>
+				</details>
+
+				<div id="meta">
+					<div><span id="Liquipedia" data-i18n="Liquipedia">Data source from Liquipedia</span></div>
+					<div><span id="DataSource" data-i18n="DataSource"></span></div>
+					<div><span id="NewHeroes" data-i18n="NewHeroes"></span></div>
+					<div><span id="MajorUpdate" data-i18n="MajorUpdate"></span></div>
+					<div><span id="ProjectAddress" data-i18n="ProjectAddress"></span></div>
+					<div><b id="Question" data-i18n="Question"></b> <span id="Answer" data-i18n="Answer"></span></div>
+					<div><span id="Note" data-i18n="Note"></span></div>
+					<div><a href="license.html" target="_blank">LICENSE</a></div>
 				</div>
-				<div>
-					<span id="ProjectAddress"></span>
-				</div>
-				<div>
-					<b id="Question"></b><br>
-					<span id="Answer"></span><br>
-					<b id="Note"></b>
-				</div>
-				<div> <a href="license.html" target="_blank">LICENSE</a> </div>
 			</div>
 		</div>
 	</div>

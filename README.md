@@ -111,16 +111,54 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
         |t2b1= |t2b2= |t2b3= |t2b4= |t2b5=
 ```
 
-#### Using Help
+#### Usage Guide
 
-##### Locally
+> **Note** — Open the page through an HTTP server (VS Code **Live Server**, `python -m http.server`, and so on). Browsers refuse to read `data.json` from a `file://` path.
+
+##### 1. Choose a mode
+The four mode checkboxes are mutually exclusive. With none of them checked, the complete block is generated:
+
+| Option | Output |
+| --- | --- |
+| none checked | side/length/winner + picks + bans |
+| Ultimate Battle | side/length/winner + picks |
+| Only Need Bans | bans only |
+| Only Need Picks | picks only |
+| Only Need Ban & Picks | picks + bans |
+
+##### 2. Fill in the match information
+- **BanNums** — 4 or 5 bans per team; the extra ban inputs are hidden.
+- **Game in Progress** — leaves `length` and `winner` empty.
+- **Change Side** — swaps the two teams' input blocks and flips Team1Side to red.
+
+##### 3. Pick a side and a winner
+`Team1Side` and `Winner` are toggle buttons. Click `Team1Side` to switch between blue and red (Team2 always takes the opposite side); click `Winner` to switch between Team1 and Team2. Both values are remembered in a cookie.
+
+##### 4. Enter the length
+`MM` and `SS` accept digits only and are zero-padded when the field loses focus. Leaving them empty produces `00:00`.
+
+##### 5. Enter heroes
+Each team has five pick slots and up to five ban slots. Type a full hero name **or any alias**, then choose an entry from the suggestion list.
+
+- red border — no hero matched; the value would be empty
+- yellow border — several heroes matched; pick one from the list
+- highlighted — the same hero is filled into more than one box, and a hint appears below the inputs
+
+##### 6. Keyboard shortcuts
+`Tab` / `Shift`+`Tab` move between inputs and buttons. While the hero suggestion list is open, `↑` / `↓` move the highlight, `Enter` confirms the highlighted entry, and `Esc` closes the list.
+
+##### 7. Manage hero aliases
+Use **Search/Update Hero Alias or Add Hero** to edit an alias list, add a hero, or delete one. Changes are stored in this browser only and are merged with an updated `data.json` on the next load: your aliases and your own heroes are kept, upstream additions are pulled in, and heroes removed upstream are removed locally. Use **Clear LocalStorage** to reset everything.
+
+##### Local deployment
 It is recommended to use [Visual Studio Code](https://code.visualstudio.com/)'s **Live Server** plug-in to deploy this Project. Please understand the inconvenience caused.
 
-The BP input box supports prompt words. This Project supports most alias prompts for ***Honor of Kings (including Global services)*** . You can also modify them by modifying the ***data.json*** . Support setting multiple  ***aliases*** for a hero, and the corresponding values are as follows:
+##### Alias data format
+The BP input box supports prompt words. This Project supports most alias prompts for ***Honor of Kings (including Global services)***. You can also modify them by editing the ***data.json***. Multiple ***aliases*** can be set for one hero; the fields are:
 
 | name  | value              |
 | ----- | ------------------ |
-| vulue | Final output value |
+| value | Final output value |
 | text  | prompt words       |
 | alias | alias (DIY)        |
 

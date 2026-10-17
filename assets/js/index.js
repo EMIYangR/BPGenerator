@@ -1,45 +1,543 @@
-// json数据文件路径
-const dataUrl = 'assets/json/data.json';
-const langUrl = 'assets/json/lang.json';
+/**
+ * 页面入口：只负责 DOM 事件与状态协调。
+ * 数据读写、文案、补全、输出生成分别在各自模块里。
+ */
+(function (window, $) {
+	'use strict';
 
-// 不建议修改的部分
-let currentInput = null; let currentIndex = -1; let suggestionsData = [], dataArray = []; const tab = ' '.repeat(8); const group = [{ label: 'Team1Picks:', prefix: 't1h', id: "Label1" }, { label: 'Team2Picks:', prefix: 't2h', id: "Label2" }, { label: 'Team1Bans:', prefix: 't1b', id: "Label3" }, { label: 'Team2Bans:', prefix: 't2b', id: "Label4" }]; const group1 = [{ label: 'Team2Picks:', prefix: 't2h', id: "Label1" }, { label: 'Team1Picks:', prefix: 't1h', id: "Label2" }, { label: 'Team2Bans:', prefix: 't2b', id: "Label3" }, { label: 'Team1Bans:', prefix: 't1b', id: "Label4" }]; const cachedStoreData = parseStoredHeroData(localStorage.getItem('HeroData')); let heroBase = cachedStoreData.base || { values: {}, texts: {} }; const cachedData = cachedStoreData.heroes.length > 0 ? cachedStoreData.heroes : null;
-$(document).ready(function () { $('#SearchHeroAlias').click(function () { $("#HeroNamesSelect").prop('selectedIndex', 0); $("#showHeroAlies").val(''); $('#Modal').css('display', 'block') }); $('.close').click(function () { $('#Modal').css('display', 'none') }); $(window).click(function (event) { if (event.target == $('#Modal')[0]) { $('#Modal').css('display', 'none') } }); $('#Search').show(); $('#Add').hide(); $('input[name="mode"]').on('change', function () { if ($(this).val() === 'search') { $('#Search').show(); $('#Add').hide() } else if ($(this).val() === 'add') { $('#Search').hide(); $('#Add').show() } }); const CookiesLang = Cookies.get('lang'); if (CookiesLang === 'zh') { $('#switchToChinese').hide(); loadLanguage('zh') } else { $('#switchToEnglish').hide(); loadLanguage('en') } $('#switchToEnglish').click(function () { loadLanguage('en'); $(this).hide(); $('#switchToChinese').show(); Cookies.set('lang', 'en', { expires: 7 }) }); $('#switchToChinese').click(function () { loadLanguage('zh'); $(this).hide(); $('#switchToEnglish').show(); Cookies.set('lang', 'zh', { expires: 7 }) }); $.ajax({ url: dataUrl, type: 'GET', dataType: 'json', success: function (remoteData) { const mergedData = mergeHeroData(remoteData, cachedData); heroBase = buildBaseIndex(remoteData); saveHeroData(mergedData); processData(mergedData) }, error: function (error) { if (cachedData) { processData(cachedData) } else { console.error('Error fetching data:', error) } } }); $('#generateButton').click(function () { generateOutput() }); $('#copyButton').click(function () { copyResult() }); $('#RemoveLocalStorage').click(function () { if (Cookies.get('lang') === 'zh') { if (!confirm('此操作将删除所有本地存储的英雄数据，且无法恢复。确定要继续吗？')) { return } } else { if (!confirm('This action will delete all locally stored hero data and cannot be undone. Are you sure you want to continue?')) { return } } localStorage.removeItem('HeroData'); location.reload() }); if (Cookies.get('banNums')) { $('#ChooseBans').val(Cookies.get('banNums')) } if (Cookies.get('team1side')) { $('#team1side').val(Cookies.get('team1side')) } if (Cookies.get('winner')) { $('#winner').val(Cookies.get('winner')) } updateSideButton(); updateWinnerButton(); checkCookieForChoose(); renderInputGroups(); $('#minutes,#seconds').on('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 2) }).on('blur', function () { this.value = this.value.replace(/\D/g, '').slice(0, 2).padStart(2, '0') }); $('#ChooseBans').change(function () { ShowBanNum() }); $('#isChangeSide').change(function () { if ($(this).prop('checked')) { if ($('#team1side').val() === 'blue') { $('#team1side').val('red').trigger('change') } } else { if ($('#team1side').val() === 'red') { $('#team1side').val('blue').trigger('change') } } renderInputGroups(); checkToolbox() }); $('#isUltimateBattle').change(function () { if (checkIsUltimateBattle()) { $('.checkbox1').not('#isUltimateBattle').prop('checked', false); $('#BPDiv1').show(); $('#BPDiv2').show(); $('#BPDiv3').hide(); $('#BPDiv4').hide() } else { showAll() } checkCookieForChoose() }); $('#isOnlyBans').change(function () { if (checkIsOnlyBans()) { $('.checkbox1').not('#isOnlyBans').prop('checked', false); $('#BPDiv1').hide(); $('#BPDiv2').hide(); $('#BPDiv3').show(); $('#BPDiv4').show() } else { showAll() } checkCookieForChoose() }); $('#isOnlyPicks').change(function () { if (checkIsOnlyPicks()) { $('.checkbox1').not('#isOnlyPicks').prop('checked', false); $('#BPDiv1').show(); $('#BPDiv2').show(); $('#BPDiv3').hide(); $('#BPDiv4').hide() } else { showAll() } checkCookieForChoose() }); $('#isOnlyBanPicks').change(function () { if (checkIsOnlyBanPicks()) { $('.checkbox1').not('#isOnlyBanPicks').prop('checked', false) } showAll(); checkCookieForChoose() }); $('#ChooseBans').change(function () { Cookies.set('banNums', $(this).val(), { expires: 7 }) }); $('#team1side').click(function () { $(this).val($(this).val() === 'blue' ? 'red' : 'blue').trigger('change') }); $('#team1side').change(function () { updateSideButton(); Cookies.set('team1side', $(this).val(), { expires: 7 }) }); $('#winner').click(function () { $(this).val($(this).val() === '1' ? '2' : '1').trigger('change') }); $('#winner').change(function () { updateWinnerButton(); Cookies.set('winner', $(this).val(), { expires: 7 }) }); $('#isChangeSide').change(function () { Cookies.set('isChangeSide', $('#isChangeSide').prop('checked') ? 'true' : 'false', { expires: 7 }) }); $(document).on('click', function () { checkSuggestionsHeight() }); $(document).on('keydown', function (event) { if (currentInput && $(currentInput).next('.autocomplete-suggestions').is(':visible')) { const suggestionsContainer = $(currentInput).next('.autocomplete-suggestions'); if (event.key === 'ArrowDown') { currentIndex = (currentIndex + 1) % suggestionsData.length; highlightSuggestion(currentIndex); scrollIfNeeded(suggestionsContainer) } else if (event.key === 'ArrowUp') { if (currentIndex != -1) { currentIndex = (currentIndex - 1 + suggestionsData.length) % suggestionsData.length } else { currentIndex = suggestionsData.length - 1 } highlightSuggestion(currentIndex); scrollIfNeeded(suggestionsContainer) } else if (event.key === 'Enter') { if (currentIndex !== -1) { const selectedItem = suggestionsData[currentIndex]; selectSuggestion(selectedItem, $(currentInput), suggestionsContainer) } suggestionsContainer.remove() } } }); let checkSuggestionsHeight = function () { const suggestionsBox = $('.autocomplete-suggestions'); if (suggestionsBox.length > 0 && suggestionsBox.height() === 0) { suggestionsBox.remove() } }; $('input').click(function () { $(this).select() }); $('#clearCookies').click(function () { document.cookie.split(';').forEach(function (cookie) { let cookieName = cookie.split('=')[0].trim(); Cookies.remove(cookieName) }); location.reload() }) });
-function renderInputGroups() { $('#inputs-container').empty(); let groups = []; let counter = 1; let isChangeSide = $("#isChangeSide").prop('checked'); if (isChangeSide) { groups = group1 } else { groups = group } groups.forEach(group => { const BPDiv = $('<div>').attr('id', `BPDiv${counter++}`).addClass('BPDiv'); const groupLabel = $('<b>').text(group.label).attr('id', group.id).addClass('LineB'); BPDiv.append(groupLabel); for (let i = 0; i < 5; i++) { const input = $('<input>').attr('type', 'text').attr('placeholder', `${group.prefix}${i + 1}`).attr('id', `${group.prefix}${i + 1}`).addClass('txtBorder txtLine').on('input', showAutocompleteSuggestions); BPDiv.append(input) } $('#inputs-container').append(BPDiv) }); bindInputClickSelect(); ShowBanNum() }
-function showAutocompleteSuggestions(event) { const input = $(event.target); const value = input.val().toLowerCase(); const suggestionsContainer = getOrCreateSuggestionsContainer(input); currentInput = input[0], currentIndex = -1; suggestionsContainer.empty(); if (value) { const filteredData = dataArray.filter(item => { const matchesText = item.text.toLowerCase().includes(value); const matchesAlias = Array.isArray(item.alias) && item.alias.some(alias => alias.toLowerCase().includes(value)); return matchesText || matchesAlias }); const uniqueItems = {}; filteredData.forEach(item => { if (!uniqueItems[item.text]) { uniqueItems[item.text] = item } }); suggestionsData = Object.values(uniqueItems); suggestionsData.forEach((item, index) => { const suggestionItem = $('<div>').addClass('suggestion-item').text(item.text).on('click', () => selectSuggestion(item, input, suggestionsContainer)).on('mouseover', () => highlightSuggestion(index)).on('mouseout', () => removeHighlightSuggestion(index)); suggestionsContainer.append(suggestionItem) }); updateSuggestionsPosition(input, suggestionsContainer) } }
-function selectSuggestion(item, input, suggestionsContainer) { input.val(item.text); input.data('value', item.value); suggestionsContainer.empty() }
-function getOrCreateSuggestionsContainer(input) { let suggestionsContainer = input.next('.autocomplete-suggestions'); let inputId = input.attr('id'); if (suggestionsContainer.length === 0) { suggestionsContainer = $('<div>').attr("id", `autocomplete-suggestions-${inputId}`).addClass('autocomplete-suggestions'); input.after(suggestionsContainer) } return suggestionsContainer }
-function updateSuggestionsPosition(input, suggestionsContainer) { const rect = input[0].getBoundingClientRect(); const absoluteLeft = rect.left + window.scrollX; const absoluteTop = rect.top + window.scrollY; const width = rect.width; suggestionsContainer.css({ left: `${absoluteLeft}px`, top: `${absoluteTop + rect.height}px`, width: `${width}px` }); }
-function getSelectedValue(input) { return input.data('value') }
-function highlightSuggestion(index) { const suggestionsContainer = $(currentInput).next('.autocomplete-suggestions'); const suggestionItems = suggestionsContainer.find('.suggestion-item'); suggestionItems.removeClass('highlighted'); suggestionItems.eq(index).addClass('highlighted') }
-function removeHighlightSuggestion(index) { const suggestionsContainer = $(currentInput).next('.autocomplete-suggestions'); const suggestionItems = suggestionsContainer.find('.suggestion-item'); suggestionItems.eq(index).removeClass('highlighted') }
-function scrollIfNeeded(suggestionsContainer) { const suggestionItems = suggestionsContainer.find('.suggestion-item'); const itemHeight = suggestionItems.first().outerHeight(); const visibleItems = Math.floor(suggestionsContainer.height() / itemHeight); const topItem = suggestionItems.eq(currentIndex); const bottomItem = suggestionItems.eq(currentIndex + visibleItems - 1); if (topItem.length > 0 && bottomItem.length > 0) { const containerHeight = suggestionsContainer.height(); const containerScrollTop = suggestionsContainer.scrollTop(); const containerScrollHeight = suggestionsContainer[0].scrollHeight; if (containerScrollTop + containerHeight >= containerScrollHeight - 5) { suggestionsContainer.scrollTop(containerScrollHeight) } else { const topItemPosition = topItem.position(); const bottomItemPosition = bottomItem.position(); if (topItemPosition && topItemPosition.top < 0) { suggestionsContainer.scrollTop(suggestionsContainer.scrollTop() + topItemPosition.top) } if (bottomItemPosition && bottomItemPosition.top > containerHeight) { suggestionsContainer.scrollTop(suggestionsContainer.scrollTop() + bottomItemPosition.top - containerHeight) } } } }
-function generateOutput() { const output = []; let emptyValue = " ", team1side = $('#team1side').val(), team2side = team1side === 'blue' ? 'red' : 'blue'; let length = ($('#minutes').val() || '00').padStart(2, '0') + ':' + ($('#seconds').val() || '00').padStart(2, '0') + emptyValue; let winner = $('#winner').val(); let banNums = $('#ChooseBans').val(); let t1h = Array.from({ length: 5 }, (_, i) => getValueById(`t1h${i + 1}`)).map((item, index) => index !== 4 ? item + emptyValue : item); let t2h = Array.from({ length: 5 }, (_, i) => getValueById(`t2h${i + 1}`)).map((item, index) => index !== 4 ? item + emptyValue : item); let t1b = Array.from({ length: 5 }, (_, i) => getValueById(`t1b${i + 1}`)).map((item, index) => index !== banNums - 1 ? item + emptyValue : item); let t2b = Array.from({ length: 5 }, (_, i) => getValueById(`t2b${i + 1}`)).map((item, index) => index !== banNums - 1 ? item + emptyValue : item); function outputGameResult() { if (checkIsGameInProgress()) { length = " "; winner = "" } output.push(`${tab}|team1side=${team1side} |team2side=${team2side} |length=${length}|winner=${winner}`) } function outputHeroPicks(t1h, t2h) { output.push(`${tab}<!-- Hero picks -->`); output.push(`${tab}|t1h1=${t1h[0]}|t1h2=${t1h[1]}|t1h3=${t1h[2]}|t1h4=${t1h[3]}|t1h5=${t1h[4]}`); output.push(`${tab}|t2h1=${t2h[0]}|t2h2=${t2h[1]}|t2h3=${t2h[2]}|t2h4=${t2h[3]}|t2h5=${t2h[4]}`) } function outputHeroBans(t1b, t2b) { output.push(`${tab}<!-- Hero bans-->`); let t1bLine = t2bLine = tab; for (let i = 0; i < $('#ChooseBans').val(); i++) { t1bLine += `|t1b${i + 1}=${t1b[i]}`; t2bLine += `|t2b${i + 1}=${t2b[i]}` } output.push(t1bLine); output.push(t2bLine) } if (checkIsUltimateBattle()) { outputGameResult(); outputHeroPicks(t1h, t2h) } if (checkIsOnlyPicks()) { outputHeroPicks(t1h, t2h) } if (checkIsOnlyBans()) { outputHeroBans(t1b, t2b) } if (checkIsOnlyBanPicks()) { outputHeroPicks(t1h, t2h); outputHeroBans(t1b, t2b) } if (noChoose()) { outputGameResult(); outputHeroPicks(t1h, t2h); outputHeroBans(t1b, t2b) } $('#output').text(output.join('\n')); copyResult()}
-function getValueById(inputId) { const inputText = $(`#${inputId}`).val().toLowerCase(); const item = dataArray.find(item => item.text.toLowerCase().includes(inputText)); return item ? item.value : '' }
-function copyResult() { const outputText = $('#output').text(); const textArea = $('<textarea>').val(outputText).appendTo('body'); textArea.select(); document.execCommand('copy'); textArea.remove() }
-function checkIsUltimateBattle() { return $("#isUltimateBattle").prop('checked') }
-function checkIsOnlyBans() { return $("#isOnlyBans").prop('checked') }
-function checkIsOnlyPicks() { return $("#isOnlyPicks").prop('checked') }
-function checkIsOnlyBanPicks() { return $("#isOnlyBanPicks").prop('checked') }
-function checkIsGameInProgress() { return $("#isGameInProgress").prop('checked') }
-function checkIsChangeSide() { return $("#isChangeSide").prop('checked') }
-function checkCookieForChoose() { if (Cookies.get('isChangeSide') !== undefined) { $('#isChangeSide').prop('checked', Cookies.get('isChangeSide') === 'true') } }
-function checkToolbox() { if (checkIsUltimateBattle()) { $('#BPDiv1').show(); $('#BPDiv2').show(); $('#BPDiv3').hide(); $('#BPDiv4').hide() } else if (checkIsOnlyBans()) { $('#BPDiv1').hide(); $('#BPDiv2').hide(); $('#BPDiv3').show(); $('#BPDiv4').show() } else if (checkIsOnlyPicks()) { $('#BPDiv1').show(); $('#BPDiv2').show(); $('#BPDiv3').hide(); $('#BPDiv4').hide() } else if (checkIsOnlyBanPicks()) { showAll() } else { showAll() } }
-function ShowBanNum() { const banNum = $('#ChooseBans').val(); for (let i = 1; i <= 5; i++) { if (i <= banNum) { $(`#t1b${i}`).show(); $(`#t2b${i}`).show() } else { $(`#t1b${i}`).hide(); $(`#t2b${i}`).hide() } } }
-function showAll() { $('#BPDiv1').show(); $('#BPDiv2').show(); $('#BPDiv3').show(); $('#BPDiv4').show() }
-function noChoose() { checkCookieForChoose(); return !checkIsUltimateBattle() && !checkIsOnlyBans() && !checkIsOnlyPicks() && !checkIsOnlyBanPicks() }
-function bindInputClickSelect() { $('#inputs-container input[type="text"]').off('click.selectInput').on('click.selectInput', function () { $(this).select() }) }
-let langData = {}; function loadLanguage(language) { $.getJSON(langUrl, function (data) { langData = data[language]; $.each(langData, function (key, value) { $('#' + key).html(value); }); updateSideButton(); updateWinnerButton() }) }
-function normalizeHeroKey(text) { return String(text === undefined || text === null ? '' : text).trim().replace(/\s+/g, ' ').toLowerCase() }
-function isPlaceholderHero(item) { return !item || item.value === '' || item.value === 'none' }
-function unionHeroAlias(remoteAlias, localAlias) { const toArray = function (alias) { if (Array.isArray(alias)) { return alias } return (typeof alias === 'string' && alias.trim()) ? [alias] : [] }; const seen = {}; const merged = []; toArray(remoteAlias).forEach(function (alias) { const key = String(alias).toLowerCase(); if (!seen[key]) { seen[key] = true; merged.push(alias) } }); toArray(localAlias).forEach(function (alias) { const key = String(alias).toLowerCase(); if (!seen[key]) { seen[key] = true; merged.push(alias) } }); return merged.length > 0 ? merged : remoteAlias }
-function buildBaseIndex(items) { const values = {}, texts = {}; (items || []).forEach(function (item) { if (isPlaceholderHero(item)) { return } values[item.value] = true; texts[normalizeHeroKey(item.text)] = true }); return { values: values, texts: texts } }
-function baseHasHero(item) { if (isPlaceholderHero(item)) { return false } return !!((heroBase.values || {})[item.value] || (heroBase.texts || {})[normalizeHeroKey(item.text)]) }
-function isSameHero(itemA, itemB) { if (isPlaceholderHero(itemA) || isPlaceholderHero(itemB)) { return false } if (itemA.value === itemB.value) { return true } const keyA = normalizeHeroKey(itemA.text); return !!keyA && keyA === normalizeHeroKey(itemB.text) }
-function mergeHeroData(remoteData, localData) { const remoteList = Array.isArray(remoteData) ? remoteData : []; if (!Array.isArray(localData) || localData.length === 0) { return remoteList } const matchedLocalIndex = {}; const merged = []; remoteList.forEach(function (remoteItem) { if (isPlaceholderHero(remoteItem)) { merged.push(remoteItem); return } let aliasSource = null; localData.forEach(function (localItem, index) { if (matchedLocalIndex[index] || !isSameHero(localItem, remoteItem)) { return } matchedLocalIndex[index] = true; if (!aliasSource) { aliasSource = localItem } }); if (aliasSource) { merged.push({ value: remoteItem.value, text: remoteItem.text, alias: unionHeroAlias(remoteItem.alias, aliasSource.alias) }); return } if (baseHasHero(remoteItem)) { return } merged.push(remoteItem) }); localData.forEach(function (localItem, index) { if (isPlaceholderHero(localItem) || matchedLocalIndex[index]) { return } if (baseHasHero(localItem)) { return } merged.push(localItem) }); return merged }
-function parseStoredHeroData(raw) { if (!raw) { return { heroes: [], base: null } } let parsed; try { parsed = JSON.parse(raw) } catch (error) { console.error('Error parsing HeroData:', error); return { heroes: [], base: null } } if (Array.isArray(parsed)) { return { heroes: parsed, base: null } } return { heroes: Array.isArray(parsed.heroes) ? parsed.heroes : [], base: (parsed.base && typeof parsed.base === 'object') ? parsed.base : null } }
-function saveHeroData(heroes) { localStorage.setItem('HeroData', JSON.stringify({ version: 2, heroes: heroes, base: heroBase })) }
-function updateSideButton() { const side = $('#team1side').val(); const label = side === 'blue' ? (langData['Blue'] || 'Blue') : (langData['Red'] || 'Red'); $('#team1side').css('background-color', side === 'blue' ? 'blue' : 'red').css('color', 'white').text(label) }
-function updateWinnerButton() { const w = $('#winner').val(); const label = w === '1' ? (langData['Team1'] || 'Team1') : (langData['Team2'] || 'Team2'); $('#winner').text(label) }
-function processData(response) { dataArray = response; response.sort(function (a, b) { return a.text.localeCompare(b.text) }); response.sort(function (a, b) { if (a.value === "") return -1; if (b.value === "") return 1; return 0 }); response.forEach(function (res) { if (res.value === "" || res.value === "none") return; $('#HeroNamesSelect').append($('<option>', { value: res.value, text: res.text })) }); $('#HeroNamesSelect').change(function () { const selectedValue = $(this).val(); const selectedHero = response.find(function (res) { return res.value === selectedValue }); if (selectedHero) { const aliasText = selectedHero.alias; aliasText.sort((a, b) => a.localeCompare(b)); $('#showHeroAlies').val(Array.isArray(aliasText) ? aliasText.join('\n') : aliasText); $('#showHeroAlies').height(0); $('#showHeroAlies').height($('#showHeroAlies')[0].scrollHeight); $('#showHeroAlies').width($('#HeroNamesSelect').width()) } }); $('#updateAliasButton').click(function () { const selectedValue = $('#HeroNamesSelect').val(); const updatedAlias = $('#showHeroAlies').val(); const selectedHero = response.find(function (res) { return res.value === selectedValue }); if (selectedHero) { const aliasArray = updatedAlias.split('\n').map(alias => alias.trim()).filter(Boolean); selectedHero.alias = aliasArray; saveHeroData(response); $('#showHeroAlies').val(aliasArray.join('\n')).height(0); $('#showHeroAlies').height($('#showHeroAlies')[0].scrollHeight); $('#showHeroAlies').width($('#HeroNamesSelect').width()) } else { console.log('No hero found with this value') } }); $('#DeleteHeroButton').click(function () { const selectedValue = $('#HeroNamesSelect').val(); const selectedHeroIndex = response.findIndex(function (res) { return res.value === selectedValue }); if (selectedHeroIndex !== -1) { response.splice(selectedHeroIndex, 1); saveHeroData(response); $('#HeroNamesSelect option[value="' + selectedValue + '"]').remove(); $('#showHeroAlies').val('') } }); $('#insertAliasButton').click(function () { const newHeroName = $('#newHeroName').val(); const newHeroValue = $('#newHeroValue').val(); const newHeroAlias = $('#newHeroAlias').val().split('\n'); const newHero = { value: newHeroValue, text: newHeroName, alias: newHeroAlias.map(alias => alias.trim()) }; const HeroData = parseStoredHeroData(localStorage.getItem('HeroData')).heroes; HeroData.push(newHero); saveHeroData(HeroData); $('#newHeroName').val(''); $('#newHeroValue').val(''); $('#newHeroAlias').val(''); $('#HeroNamesSelect').append($('<option>', { value: newHeroValue, text: newHeroName })); $('#HeroNamesSelect option').sort(function (a, b) { return $(a).text().localeCompare($(b).text()) }).appendTo('#HeroNamesSelect'); $('#HeroNamesSelect').val(newHeroValue).trigger('change') }) }
-const originalRenderInputGroups = function () { originalRenderInputGroups(); bindInputClickSelect() };
+	var DATA_URL = 'assets/json/data.json';
+	var COOKIE_DAYS = 7;
+	var SELECTOR_TEXT = 'input[type="text"]';
+
+	var GROUPS = [
+		{ label: 'Team1Picks:', i18n: 'Team1Picks', prefix: 't1h' },
+		{ label: 'Team2Picks:', i18n: 'Team2Picks', prefix: 't2h' },
+		{ label: 'Team1Bans:', i18n: 'Team1Bans', prefix: 't1b' },
+		{ label: 'Team2Bans:', i18n: 'Team2Bans', prefix: 't2b' }
+	];
+	var SWAPPED_GROUPS = [GROUPS[1], GROUPS[0], GROUPS[3], GROUPS[2]];
+
+	var state = { heroes: [] };
+	var statusTimer = null;
+
+	$(function () {
+		var stored = HeroStore.load();
+
+		bindToolbar();
+		bindModal();
+		bindLanguage();
+		restorePreferences();
+		renderInputGroups();
+		checkToolbox();
+		loadHeroes(stored);
+	});
+
+	/* ---------- 数据 ---------- */
+
+	function loadHeroes(stored) {
+		$.ajax({ url: DATA_URL, type: 'GET', dataType: 'json' })
+			.done(function (remote) {
+				applyHeroes(HeroStore.sync(remote));
+			})
+			.fail(function (xhr, status, error) {
+				console.error('英雄数据加载失败：', status, error);
+				applyHeroes(stored.heroes || []);
+				showStatus(I18n.t('dataLoadFailed', 'Hero data failed to load, please open this page through an HTTP server'), 5000);
+			});
+	}
+
+	function applyHeroes(heroes) {
+		state.heroes = heroes;
+		HeroAutocomplete.setData(heroes);
+		renderHeroOptions();
+		renderInputGroups();
+		checkToolbox();
+		ShowBanNum();
+	}
+
+	function findHero(value) {
+		return state.heroes.filter(function (hero) { return hero.value === value; })[0] || null;
+	}
+
+	function renderInputGroups() {
+		var $container = $('#inputs-container');
+
+		var previous = {};
+		$container.find('input').each(function () {
+			previous[this.id] = this.value;
+		});
+
+		$container.empty();
+		var groups = $('#isChangeSide').prop('checked') ? SWAPPED_GROUPS : GROUPS;
+
+		groups.forEach(function (group, index) {
+			var $block = $('<div class="bp-group"></div>').attr('id', 'BPDiv' + (index + 1));
+			$('<b class="bp-label"></b>')
+				.attr('data-i18n', group.i18n)
+				.text(group.label)
+				.appendTo($block);
+
+			var $row = $('<div class="bp-row"></div>');
+			for (var i = 1; i <= 5; i++) {
+				var id = group.prefix + i;
+				$('<input type="text" autocomplete="off" class="txtBorder">')
+					.attr({ id: id, placeholder: id })
+					.val(previous[id] || '')
+					.appendTo($row);
+			}
+			$block.append($row).appendTo($container);
+			HeroAutocomplete.attach($row.find('input'));
+		});
+
+		I18n.apply();
+		checkDuplicates();
+	}
+
+	function ShowBanNum() {
+		var banNum = parseInt($('#ChooseBans').val(), 10) || 5;
+		for (var i = 1; i <= 5; i++) {
+			$('#t1b' + i + ', #t2b' + i).toggle(i <= banNum);
+		}
+		checkDuplicates();
+	}
+
+	function currentMode() {
+		if ($('#isUltimateBattle').prop('checked')) { return 'ultimate'; }
+		if ($('#isOnlyBans').prop('checked')) { return 'bans'; }
+		if ($('#isOnlyPicks').prop('checked')) { return 'picks'; }
+		if ($('#isOnlyBanPicks').prop('checked')) { return 'banpicks'; }
+		return 'all';
+	}
+
+	function checkToolbox() {
+		var mode = currentMode();
+		var showPicks = mode !== 'bans';
+		var showBans = mode === 'bans' || mode === 'banpicks' || mode === 'all';
+		$('#BPDiv1, #BPDiv2').toggle(showPicks);
+		$('#BPDiv3, #BPDiv4').toggle(showBans);
+		checkDuplicates();
+	}
+
+	function bindToolbar() {
+		$('#team1side').on('click', function () {
+			setSide($('#team1side').val() === 'blue' ? 'red' : 'blue');
+		});
+		$('#winner').on('click', function () {
+			setWinner($('#winner').val() === '1' ? '2' : '1');
+		});
+
+		$('#minutes, #seconds')
+			.on('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 2); })
+			.on('blur', function () { this.value = OutputBuilder.pad2(this.value); });
+
+		$(document)
+			.on('focus', SELECTOR_TEXT, function () { this.select(); })
+			.on('mouseup', SELECTOR_TEXT, function (event) {
+				if (!$(this).data('selectGuard')) {
+					event.preventDefault();
+					$(this).data('selectGuard', true);
+				}
+			})
+			.on('blur', SELECTOR_TEXT, function () { $(this).removeData('selectGuard'); });
+
+		$('#ChooseBans').on('change', function () {
+			ShowBanNum();
+			Cookies.set('banNums', $(this).val(), { expires: COOKIE_DAYS });
+		});
+
+		$('.mode-check').on('change', function () {
+			var $this = $(this);
+			if ($this.prop('checked')) {
+				$('.mode-check').not($this).prop('checked', false);
+			}
+			Cookies.set($this.attr('id'), $this.prop('checked') ? 'true' : 'false', { expires: COOKIE_DAYS });
+			checkToolbox();
+		});
+
+		$('#isGameInProgress').on('change', function () {
+			Cookies.set('isGameInProgress', $(this).prop('checked') ? 'true' : 'false', { expires: COOKIE_DAYS });
+		});
+
+		$('#isChangeSide').on('change', function () {
+			var checked = $(this).prop('checked');
+			if (checked && $('#team1side').val() === 'blue') { setSide('red'); }
+			if (!checked && $('#team1side').val() === 'red') { setSide('blue'); }
+			Cookies.set('isChangeSide', checked ? 'true' : 'false', { expires: COOKIE_DAYS });
+			renderInputGroups();
+			checkToolbox();
+			ShowBanNum();
+		});
+
+		$('#generateButton').on('click', generateAndCopy);
+		$('#inputs-container').on('input', 'input', checkDuplicates);
+
+		$('#clearCookies').on('click', function () {
+			document.cookie.split(';').forEach(function (cookie) {
+				var name = cookie.split('=')[0].trim();
+				if (name) { Cookies.remove(name); }
+			});
+			location.reload();
+		});
+
+		$('#RemoveLocalStorage').on('click', function () {
+			var zh = I18n.language() === 'zh';
+			var question = zh
+				? '此操作将删除所有本地存储的英雄数据，且无法恢复。确定要继续吗？'
+				: 'This will delete all locally stored hero data and cannot be undone. Continue?';
+			if (!window.confirm(question)) { return; }
+			try {
+				localStorage.removeItem('HeroData');
+			} catch (error) {
+				console.error('清空本地存储失败：', error);
+				showStatus(I18n.t('storageClearFailed', 'Failed to clear local storage'), 4000);
+				return;
+			}
+			location.reload();
+		});
+	}
+
+	function restorePreferences() {
+		var side = Cookies.get('team1side');
+		$('#team1side').val(side === 'red' ? 'red' : 'blue');
+		$('#winner').val(Cookies.get('winner') === '2' ? '2' : '1');
+		if (Cookies.get('banNums')) { $('#ChooseBans').val(Cookies.get('banNums')); }
+
+		$('#isChangeSide').prop('checked', Cookies.get('isChangeSide') === 'true');
+		['isUltimateBattle', 'isOnlyBans', 'isOnlyPicks', 'isOnlyBanPicks', 'isGameInProgress'].forEach(function (id) {
+			if (Cookies.get(id) !== undefined) {
+				$('#' + id).prop('checked', Cookies.get(id) === 'true');
+			}
+		});
+
+		if ($('#isChangeSide').prop('checked') && $('#team1side').val() === 'blue') {
+			setSide('red');
+		}
+
+		updateSideButton();
+		updateWinnerButton();
+	}
+
+	function setSide(value) {
+		$('#team1side').val(value);
+		updateSideButton();
+		Cookies.set('team1side', value, { expires: COOKIE_DAYS });
+	}
+
+	function updateSideButton() {
+		var side = $('#team1side').val() === 'red' ? 'red' : 'blue';
+		var key = side === 'blue' ? 'Blue' : 'Red';
+		$('#team1side').attr('data-side', side).text(I18n.t(key, key));
+	}
+
+	function setWinner(value) {
+		$('#winner').val(value);
+		updateWinnerButton();
+		Cookies.set('winner', value, { expires: COOKIE_DAYS });
+	}
+
+	function updateWinnerButton() {
+		var key = $('#winner').val() === '2' ? 'Team2' : 'Team1';
+		$('#winner').text(I18n.t(key, key));
+	}
+
+	function bindLanguage() {
+		$('#switchToEnglish').on('click', function () {
+			Cookies.set('lang', 'en', { expires: COOKIE_DAYS });
+			applyLanguage('en');
+		});
+		$('#switchToChinese').on('click', function () {
+			Cookies.set('lang', 'zh', { expires: COOKIE_DAYS });
+			applyLanguage('zh');
+		});
+
+		applyLanguage(Cookies.get('lang') === 'zh' ? 'zh' : 'en');
+	}
+
+	function applyLanguage(language) {
+		var afterLoad = function () {
+			var current = I18n.language();
+			document.documentElement.lang = current === 'zh' ? 'zh-CN' : 'en';
+			$('body').toggleClass('lang-zh', current === 'zh');
+			$('#switchToEnglish').toggle(current === 'zh');
+			$('#switchToChinese').toggle(current !== 'zh');
+			updateSideButton();
+			updateWinnerButton();
+			checkDuplicates();
+		};
+		I18n.load(language).then(afterLoad, afterLoad);
+	}
+
+	function readPick(inputId) {
+		var $input = $('#' + inputId);
+		var raw = String($input.val() || '').trim();
+		var pickedValue = $input.data('pickedValue');
+		var pickedText = $input.data('pickedText');
+		var result;
+
+		if (raw === '') {
+			result = { value: '', status: 'empty' };
+		} else if (pickedValue && raw === pickedText) {
+			result = { value: pickedValue, status: 'picked' };
+		} else {
+			result = HeroStore.resolve(state.heroes, raw);
+		}
+
+		$input.removeClass('is-invalid is-ambiguous').removeAttr('title');
+		if (result.status === 'none') {
+			$input.addClass('is-invalid').attr('title', I18n.t('heroNotMatched', 'No matching hero'));
+		} else if (result.status === 'ambiguous') {
+			$input.addClass('is-ambiguous').attr('title', I18n.t('heroAmbiguous', 'Multiple matches, pick one from the list'));
+		}
+		return result.value;
+	}
+
+	function readPickList(prefix) {
+		return [1, 2, 3, 4, 5].map(function (index) { return readPick(prefix + index); });
+	}
+
+	function activeHeroInputs() {
+		var mode = currentMode();
+		var showPicks = mode !== 'bans';
+		var showBans = mode === 'bans' || mode === 'banpicks' || mode === 'all';
+		var banNum = parseInt($('#ChooseBans').val(), 10) || 5;
+		var inputs = [];
+
+		[['t1h', 5], ['t2h', 5], ['t1b', banNum], ['t2b', banNum]].forEach(function (group) {
+			var prefix = group[0];
+			var limit = group[1];
+			var isBan = prefix.charAt(2) === 'b';
+			if (isBan ? !showBans : !showPicks) { return; }
+
+			for (var i = 1; i <= limit; i++) {
+				var $input = $('#' + prefix + i);
+				if ($input.length) { inputs.push($input); }
+			}
+		});
+
+		return inputs;
+	}
+
+	function heroKey($input) {
+		var raw = String($input.val() || '').trim();
+		if (raw === '') { return ''; }
+
+		var pickedValue = $input.data('pickedValue');
+		var pickedText = $input.data('pickedText');
+		var value = (pickedValue && raw === pickedText)
+			? pickedValue
+			: HeroStore.resolve(state.heroes, raw).value;
+
+		return value || 'text:' + HeroStore.normalizeText(raw);
+	}
+
+	function heroLabel(key, $input) {
+		if (key.indexOf('text:') === 0) { return String($input.val() || '').trim(); }
+		var hero = findHero(key);
+		return hero ? hero.text : String($input.val() || '').trim();
+	}
+
+	function checkDuplicates() {
+		var groups = {};
+		var order = [];
+
+		activeHeroInputs().forEach(function ($input) {
+			$input.removeClass('is-duplicate');
+			var key = heroKey($input);
+			if (key === '') { return; }
+			if (!groups[key]) {
+				groups[key] = { label: heroLabel(key, $input), inputs: [] };
+				order.push(key);
+			}
+			groups[key].inputs.push($input);
+		});
+
+		var repeated = [];
+		order.forEach(function (key) {
+			var group = groups[key];
+			if (group.inputs.length < 2) { return; }
+			group.inputs.forEach(function ($input) { $input.addClass('is-duplicate'); });
+			repeated.push(group.label + ' ×' + group.inputs.length);
+		});
+
+		var $hint = $('#duplicateHint');
+		if (repeated.length === 0) {
+			$hint.text('').prop('hidden', true);
+			return;
+		}
+		$hint
+			.text(I18n.t('duplicateHint', 'Duplicate entries:') + ' ' + repeated.join(' / '))
+			.prop('hidden', false);
+	}
+
+	function generateAndCopy() {
+		var text = OutputBuilder.build({
+			team1side: $('#team1side').val(),
+			minutes: $('#minutes').val(),
+			seconds: $('#seconds').val(),
+			winner: $('#winner').val(),
+			banNums: $('#ChooseBans').val(),
+			gameInProgress: $('#isGameInProgress').prop('checked'),
+			mode: currentMode(),
+			picks: {
+				t1h: readPickList('t1h'),
+				t2h: readPickList('t2h'),
+				t1b: readPickList('t1b'),
+				t2b: readPickList('t2b')
+			}
+		});
+
+		copyText(text);
+	}
+
+	function copyText(text) {
+		if (!text) { return; }
+
+		var onCopied = function () { showStatus(I18n.t('copied', 'Copied to clipboard')); };
+		var onFailed = function () { showStatus(I18n.t('copyFailed', 'Copy failed, select the text below')); };
+
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(text).then(onCopied).catch(function () {
+				legacyCopy(text) ? onCopied() : onFailed();
+			});
+			return;
+		}
+		legacyCopy(text) ? onCopied() : onFailed();
+	}
+
+	function legacyCopy(text) {
+		var $area = $('<textarea></textarea>')
+			.val(text)
+			.css({ position: 'fixed', top: '-1000px', left: '-1000px' })
+			.appendTo('body');
+		$area[0].select();
+		var ok = false;
+		try { ok = document.execCommand('copy'); } catch (error) { ok = false; }
+		$area.remove();
+		return ok;
+	}
+
+	function showStatus(message, duration) {
+		if (statusTimer) { clearTimeout(statusTimer); }
+		var $status = $('#actionStatus').text(message);
+		statusTimer = setTimeout(function () { $status.text(''); }, duration || 2000);
+	}
+
+	function bindModal() {
+		$('#SearchHeroAlias').on('click', function () {
+			$('#HeroNamesSelect').prop('selectedIndex', 0);
+			$('#showHeroAlies').val('');
+			$('#Modal').addClass('is-open');
+		});
+		$('#Modal .close').on('click', closeModal);
+		$('#Modal').on('click', function (event) {
+			if (event.target === this) { closeModal(); }
+		});
+		$(document).on('keydown', function (event) {
+			if (event.key === 'Escape' && $('#Modal').hasClass('is-open')) { closeModal(); }
+		});
+
+		$('input[name="mode"]').on('change', function () {
+			var isSearch = $(this).val() === 'search';
+			$('#Search').toggle(isSearch);
+			$('#Add').toggle(!isSearch);
+		});
+
+		$('#HeroNamesSelect').on('change', function () {
+			var hero = findHero($(this).val());
+			if (!hero) { $('#showHeroAlies').val(''); return; }
+			var alias = Array.isArray(hero.alias)
+				? hero.alias.slice().sort(function (a, b) { return String(a).localeCompare(String(b)); })
+				: String(hero.alias || '');
+			$('#showHeroAlies').val(Array.isArray(alias) ? alias.join('\n') : alias);
+			resizeAliasBox();
+		});
+
+		$('#updateAliasButton').on('click', function () {
+			var hero = findHero($('#HeroNamesSelect').val());
+			if (!hero) { console.warn('未找到选中的英雄。'); return; }
+			hero.alias = $('#showHeroAlies').val().split('\n')
+				.map(function (alias) { return alias.trim(); })
+				.filter(Boolean);
+			HeroStore.save(state.heroes);
+			HeroAutocomplete.setData(state.heroes);
+			resizeAliasBox();
+		});
+
+		$('#DeleteHeroButton').on('click', function () {
+			var value = $('#HeroNamesSelect').val();
+			var index = -1;
+			state.heroes.forEach(function (hero, position) {
+				if (index === -1 && hero.value === value) { index = position; }
+			});
+			if (index === -1) { return; }
+			state.heroes.splice(index, 1);
+			HeroStore.save(state.heroes);
+			HeroAutocomplete.setData(state.heroes);
+			$('#HeroNamesSelect option').filter(function () { return this.value === value; }).remove();
+			$('#showHeroAlies').val('');
+		});
+
+		$('#insertAliasButton').on('click', insertHero);
+	}
+
+	function closeModal() {
+		$('#Modal').removeClass('is-open');
+	}
+
+	function resizeAliasBox() {
+		var $box = $('#showHeroAlies');
+		$box.height(0).height($box[0].scrollHeight);
+	}
+
+	function insertHero() {
+		var $name = $('#newHeroName');
+		var $value = $('#newHeroValue');
+		var name = String($name.val() || '').trim();
+		var value = String($value.val() || '').trim();
+
+		$name.add($value).removeClass('is-invalid');
+		if (name === '') { $name.addClass('is-invalid'); }
+		if (value === '') { $value.addClass('is-invalid'); }
+		if (name === '' || value === '') { return; }
+
+		var hero = {
+			value: value,
+			text: name,
+			alias: String($('#newHeroAlias').val() || '').split('\n')
+				.map(function (alias) { return alias.trim(); })
+				.filter(Boolean)
+		};
+
+		state.heroes.push(hero);
+		HeroStore.save(state.heroes);
+		HeroAutocomplete.setData(state.heroes);
+
+		$('#HeroNamesSelect').append($('<option></option>').val(hero.value).text(hero.text));
+		sortHeroOptions();
+		$('#HeroNamesSelect').val(hero.value).trigger('change');
+
+		$('#newHeroName').val('');
+		$('#newHeroValue').val('');
+		$('#newHeroAlias').val('');
+	}
+
+	function sortHeroOptions() {
+		var $select = $('#HeroNamesSelect');
+		var sorted = $select.find('option').slice(1).get().sort(function (a, b) {
+			return $(a).text().localeCompare($(b).text());
+		});
+		$select.append(sorted);
+	}
+
+	function renderHeroOptions() {
+		var $select = $('#HeroNamesSelect');
+		$select.find('option').slice(1).remove();
+		state.heroes
+			.filter(function (hero) { return hero.value !== '' && hero.value !== 'none'; })
+			.slice()
+			.sort(function (a, b) { return String(a.text).localeCompare(String(b.text)); })
+			.forEach(function (hero) {
+				$('<option></option>').val(hero.value).text(hero.text).appendTo($select);
+			});
+	}
+})(window, jQuery);
