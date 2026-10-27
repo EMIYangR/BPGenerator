@@ -7,9 +7,10 @@ window.HeroStore = (function (global) {
 
 	var base = { values: {}, texts: {} };
 
-	function normalizeText(value) {
+	function normalizeText(value, ignoreSpaces) {
 		if (value === undefined || value === null) { return ''; }
-		return String(value).trim().replace(/\s+/g, ' ').toLowerCase();
+		var text = String(value).trim().replace(/\s+/g, ' ').toLowerCase();
+		return ignoreSpaces ? text.replace(/\s+/g, '') : text;
 	}
 
 	function isPlaceholder(item) {
@@ -154,24 +155,27 @@ window.HeroStore = (function (global) {
 		return merged;
 	}
 
-	function resolve(heroes, rawText) {
-		var text = normalizeText(rawText);
+	function resolve(heroes, rawText, options) {
+		var ignoreSpaces = !!(options && options.ignoreSpaces);
+		var text = normalizeText(rawText, ignoreSpaces);
 		var candidates = (heroes || []).filter(function (hero) { return !isPlaceholder(hero); });
 		var result = { value: '', status: 'empty' };
 
 		if (text === '') { return result; }
 
-		var exact = candidates.filter(function (hero) { return normalizeText(hero.text) === text; })[0];
+		var exact = candidates.filter(function (hero) { return normalizeText(hero.text, ignoreSpaces) === text; })[0];
 		if (exact) { return { value: exact.value, status: 'exact' }; }
 
 		var byAlias = candidates.filter(function (hero) {
-			return toAliasList(hero.alias).some(function (alias) { return normalizeText(alias) === text; });
+			return toAliasList(hero.alias).some(function (alias) { return normalizeText(alias, ignoreSpaces) === text; });
 		})[0];
 		if (byAlias) { return { value: byAlias.value, status: 'alias' }; }
 
 		var partial = candidates.filter(function (hero) {
-			if (normalizeText(hero.text).indexOf(text) !== -1) { return true; }
-			return toAliasList(hero.alias).some(function (alias) { return normalizeText(alias).indexOf(text) !== -1; });
+			if (normalizeText(hero.text, ignoreSpaces).indexOf(text) !== -1) { return true; }
+			return toAliasList(hero.alias).some(function (alias) {
+				return normalizeText(alias, ignoreSpaces).indexOf(text) !== -1;
+			});
 		});
 		if (partial.length > 0) {
 			return { value: partial[0].value, status: partial.length > 1 ? 'ambiguous' : 'partial' };

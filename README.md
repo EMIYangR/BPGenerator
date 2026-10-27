@@ -116,23 +116,29 @@ This Project implements [***Liquipedia***](https://liquipedia.net/honorofkings/)
 > **Note** — Open the page through an HTTP server (VS Code **Live Server**, `python -m http.server`, and so on). Browsers refuse to read `data.json` from a `file://` path.
 
 ##### 1. Choose a mode
-The four mode checkboxes are mutually exclusive. With none of them checked, the complete block is generated:
+The **Mode** group holds five radio buttons — only one can be selected at a time, and **Standard** is the default:
 
 | Option | Output |
 | --- | --- |
-| none checked | side/length/winner + picks + bans |
+| Standard (default) | side/length/winner + picks + bans |
 | Ultimate Battle | side/length/winner + picks |
-| Only Need Bans | bans only |
-| Only Need Picks | picks only |
-| Only Need Ban & Picks | picks + bans |
+| Bans Only | bans only |
+| Picks Only | picks only |
+| Bans & Picks | picks + bans |
 
 ##### 2. Fill in the match information
 - **BanNums** — 4 or 5 bans per team; the extra ban inputs are hidden.
 - **Game in Progress** — leaves `length` and `winner` empty.
-- **Change Side** — swaps the two teams' input blocks and flips Team1Side to red.
+- **Without Space** — when matching heroes, every space is removed from **both** the text you type and the hero names/aliases, so `flowborn assassin` still matches `Flowborn (Assassin)`.
 
 ##### 3. Pick a side and a winner
-`Team1Side` and `Winner` are toggle buttons. Click `Team1Side` to switch between blue and red (Team2 always takes the opposite side); click `Winner` to switch between Team1 and Team2. Both values are remembered in a cookie.
+`Team1Side`, `Winner` and `Change Side` are toggle buttons:
+
+- `Team1Side` — switches between blue and red; Team2 always takes the opposite side
+- `Winner` — switches between Team1 and Team2
+- `Change Side` — swaps the two teams' input blocks and flips Team1Side to red
+
+All three values are remembered in a cookie.
 
 ##### 4. Enter the length
 `MM` and `SS` accept digits only and are zero-padded when the field loses focus. Leaving them empty produces `00:00`.

@@ -3,6 +3,7 @@ window.HeroAutocomplete = (function ($) {
 
 	var MAX_ITEMS = 30;
 	var heroes = [];
+	var ignoreSpaces = false;
 	var $box = null;
 	var $activeInput = null;
 	var items = [];
@@ -11,7 +12,12 @@ window.HeroAutocomplete = (function ($) {
 
 	function normalize(value) {
 		if (value === undefined || value === null) { return ''; }
-		return String(value).trim().replace(/\s+/g, ' ').toLowerCase();
+		var text = String(value).trim().replace(/\s+/g, ' ').toLowerCase();
+		return ignoreSpaces ? text.replace(/\s+/g, '') : text;
+	}
+
+	function setOptions(options) {
+		if (options && typeof options.ignoreSpaces === 'boolean') { ignoreSpaces = options.ignoreSpaces; }
 	}
 
 	function aliasList(hero) {
@@ -165,5 +171,5 @@ window.HeroAutocomplete = (function ($) {
 
 	$(window).on('resize', close);
 
-	return { setData: setData, attach: attach, close: close };
+	return { setData: setData, setOptions: setOptions, attach: attach, close: close };
 })(jQuery);

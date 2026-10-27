@@ -70,52 +70,65 @@
 		<div id="content">
 			<div id="tool">
 				<div id="titleDiv">
-					<div class="control-row">
-						<label>
-							<input type="checkbox" id="isUltimateBattle" class="mode-check">
-							<b id="UltimateBattle" data-i18n="UltimateBattle">Ultimate Battle?</b>
-						</label>
-						<label>
-							<input type="checkbox" id="isOnlyBans" class="mode-check">
-							<b id="OnlyBans" data-i18n="OnlyBans">Only Need Bans?</b>
-						</label>
-						<label>
-							<input type="checkbox" id="isOnlyPicks" class="mode-check">
-							<b id="OnlyPicks" data-i18n="OnlyPicks">Only Need Picks?</b>
-						</label>
-						<label>
-							<input type="checkbox" id="isOnlyBanPicks" class="mode-check">
-							<b id="OnlyBanPicks" data-i18n="OnlyBanPicks">Only Need Ban &amp; Picks?</b>
-						</label>
+					<div class="control-group">
+						<span class="group-title" data-i18n="ModeGroup">Mode</span>
+						<div class="control-row">
+							<label>
+								<input type="radio" name="bpMode" id="modeStandard" class="mode-check" value="standard" checked>
+								<b id="Standard" data-i18n="Standard">Standard</b>
+							</label>
+							<label>
+								<input type="radio" name="bpMode" id="isUltimateBattle" class="mode-check" value="ultimate">
+								<b id="UltimateBattle" data-i18n="UltimateBattle">Ultimate Battle</b>
+							</label>
+							<label>
+								<input type="radio" name="bpMode" id="isOnlyBans" class="mode-check" value="bans">
+								<b id="OnlyBans" data-i18n="OnlyBans">Bans Only</b>
+							</label>
+							<label>
+								<input type="radio" name="bpMode" id="isOnlyPicks" class="mode-check" value="picks">
+								<b id="OnlyPicks" data-i18n="OnlyPicks">Picks Only</b>
+							</label>
+							<label>
+								<input type="radio" name="bpMode" id="isOnlyBanPicks" class="mode-check" value="banpicks">
+								<b id="OnlyBanPicks" data-i18n="OnlyBanPicks">Bans &amp; Picks</b>
+							</label>
+						</div>
 					</div>
 
-					<div class="control-row">
-						<label for="ChooseBans"><b id="BanNums" data-i18n="BanNums">BanNums:</b></label>
-						<select id="ChooseBans" class="txtBorder">
-							<option value="4">4</option>
-							<option value="5" selected>5</option>
-						</select>
-						<label>
-							<input type="checkbox" id="isGameInProgress">
-							<b id="GameInProgress" data-i18n="GameInProgress">Game in Progress?</b>
-						</label>
-						<label>
-							<input type="checkbox" id="isChangeSide">
-							<b id="ChangeSide" data-i18n="ChangeSide">Change Side?</b>
-						</label>
+					<div class="control-group">
+						<span class="group-title" data-i18n="SettingsGroup">Settings</span>
+						<div class="control-row">
+							<label for="ChooseBans"><b id="BanNums" data-i18n="BanNums">BanNums:</b></label>
+							<select id="ChooseBans" class="txtBorder">
+								<option value="4">4</option>
+								<option value="5" selected>5</option>
+							</select>
+							<label>
+								<input type="checkbox" id="isGameInProgress">
+								<b id="GameInProgress" data-i18n="GameInProgress">Game in Progress?</b>
+							</label>
+							<label>
+								<input type="checkbox" id="isWithoutSpace">
+								<b id="WithoutSpace" data-i18n="WithoutSpace">Ignore Spaces</b>
+							</label>
+							<button type="button" id="changeSide" class="toggleButton" data-swapped="false" data-i18n="ChangeSide">Change Side?</button>
+						</div>
 					</div>
 
-					<div class="control-row">
-						<span id="TeamSide" class="field-label" data-i18n="TeamSide">Team1Side:</span>
-						<button type="button" id="team1side" name="team1side" class="toggleButton" data-side="blue" value="blue">Blue</button>
+					<div class="control-group">
+						<div class="control-row">
+							<span id="TeamSide" class="field-label" data-i18n="TeamSide">Team1Side:</span>
+							<button type="button" id="team1side" name="team1side" class="toggleButton" data-side="blue" value="blue">Blue</button>
 
-						<label for="minutes" id="Length" class="field-label" data-i18n="Length">Length:</label>
-						<input type="text" id="minutes" class="txtBorder timeInput" placeholder="MM" maxlength="2" autocomplete="off">
-						<span class="time-sep">:</span>
-						<input type="text" id="seconds" class="txtBorder timeInput" placeholder="SS" maxlength="2" autocomplete="off">
+							<label for="minutes" id="Length" class="field-label" data-i18n="Length">Length:</label>
+							<input type="text" id="minutes" class="txtBorder timeInput" placeholder="MM" maxlength="2" autocomplete="off">
+							<span class="time-sep">:</span>
+							<input type="text" id="seconds" class="txtBorder timeInput" placeholder="SS" maxlength="2" autocomplete="off">
 
-						<span id="Winner" class="field-label" data-i18n="Winner">Winner:</span>
-						<button type="button" id="winner" name="winner" class="toggleButton" value="1">Team1</button>
+							<span id="Winner" class="field-label" data-i18n="Winner">Winner:</span>
+							<button type="button" id="winner" name="winner" class="toggleButton" value="1">Team1</button>
+						</div>
 					</div>
 				</div>
 
@@ -135,9 +148,9 @@
 				<details id="guide" class="guide">
 					<summary data-i18n="guideTitle">Usage guide</summary>
 					<ol class="guide-steps">
-						<li data-i18n="guideStep1"><b>Mode</b> — the four checkboxes are mutually exclusive. Leave all unchecked for a full result.</li>
-						<li data-i18n="guideStep2"><b>Match info</b> — set BanNums (4 or 5), tick Game in Progress to leave length and winner blank, and tick Change Side to swap the two teams' input blocks.</li>
-						<li data-i18n="guideStep3"><b>Side and winner</b> — click Team1Side to toggle blue/red; Team2 takes the opposite side automatically. Click Winner to toggle Team1/Team2.</li>
+						<li data-i18n="guideStep1"><b>Mode</b> — five radio buttons, only one at a time. Standard is the default and outputs the complete block; every other option outputs only the lines it needs.</li>
+						<li data-i18n="guideStep2"><b>Match info</b> — set BanNums (4 or 5), tick Game in Progress to leave length and winner blank, and tick Without Space to ignore every space when matching heroes.</li>
+						<li data-i18n="guideStep3"><b>Side and winner</b> — click Team1Side to toggle blue/red; Team2 takes the opposite side automatically, click Winner to toggle Team1/Team2, and click Change Side to swap the two teams' input blocks (Team1Side turns red).</li>
 						<li data-i18n="guideStep4"><b>Length</b> — MM and SS accept digits only and are padded on blur; leaving them empty produces 00:00.</li>
 						<li data-i18n="guideStep5"><b>Heroes</b> — type a full name or an alias and pick from the list. A red border means no match, a yellow border means several matches, and a hero filled into more than one box is highlighted.</li>
 						<li data-i18n="guideStep6"><b>Keyboard</b> — Tab and Shift+Tab move between inputs and buttons; ↑ / ↓ move through the suggestion list; Enter confirms the highlighted entry; Esc closes the list.</li>

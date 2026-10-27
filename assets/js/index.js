@@ -1,7 +1,3 @@
-/**
- * 页面入口：只负责 DOM 事件与状态协调。
- * 数据读写、文案、补全、输出生成分别在各自模块里。
- */
 (function (window, $) {
 	'use strict';
 
@@ -31,8 +27,6 @@
 		checkToolbox();
 		loadHeroes(stored);
 	});
-
-	/* ---------- 数据 ---------- */
 
 	function loadHeroes(stored) {
 		$.ajax({ url: DATA_URL, type: 'GET', dataType: 'json' })
@@ -68,7 +62,7 @@
 		});
 
 		$container.empty();
-		var groups = $('#isChangeSide').prop('checked') ? SWAPPED_GROUPS : GROUPS;
+		var groups = isChangeSide() ? SWAPPED_GROUPS : GROUPS;
 
 		groups.forEach(function (group, index) {
 			var $block = $('<div class="bp-group"></div>').attr('id', 'BPDiv' + (index + 1));
@@ -102,11 +96,9 @@
 	}
 
 	function currentMode() {
-		if ($('#isUltimateBattle').prop('checked')) { return 'ultimate'; }
-		if ($('#isOnlyBans').prop('checked')) { return 'bans'; }
-		if ($('#isOnlyPicks').prop('checked')) { return 'picks'; }
-		if ($('#isOnlyBanPicks').prop('checked')) { return 'banpicks'; }
-		return 'all';
+		var value = $('input[name="bpMode"]:checked').val();
+		if (!value || value === 'standard') { return 'all'; }
+		return value;
 	}
 
 	function checkToolbox() {
@@ -146,11 +138,7 @@
 		});
 
 		$('.mode-check').on('change', function () {
-			var $this = $(this);
-			if ($this.prop('checked')) {
-				$('.mode-check').not($this).prop('checked', false);
-			}
-			Cookies.set($this.attr('id'), $this.prop('checked') ? 'true' : 'false', { expires: COOKIE_DAYS });
+			Cookies.set('mode', currentMode(), { expires: COOKIE_DAYS });
 			checkToolbox();
 		});
 
@@ -158,14 +146,15 @@
 			Cookies.set('isGameInProgress', $(this).prop('checked') ? 'true' : 'false', { expires: COOKIE_DAYS });
 		});
 
-		$('#isChangeSide').on('change', function () {
+		$('#isWithoutSpace').on('change', function () {
 			var checked = $(this).prop('checked');
-			if (checked && $('#team1side').val() === 'blue') { setSide('red'); }
-			if (!checked && $('#team1side').val() === 'red') { setSide('blue'); }
-			Cookies.set('isChangeSide', checked ? 'true' : 'false', { expires: COOKIE_DAYS });
-			renderInputGroups();
-			checkToolbox();
-			ShowBanNum();
+			Cookies.set('isWithoutSpace', checked ? 'true' : 'false', { expires: COOKIE_DAYS });
+			HeroAutocomplete.setOptions({ ignoreSpaces: checked });
+			checkDuplicates();
+		});
+
+		$('#changeSide').on('click', function () {
+			setChangeSide(!isChangeSide());
 		});
 
 		$('#generateButton').on('click', generateAndCopy);
@@ -196,22 +185,39 @@
 		});
 	}
 
+	var LEGACY_MODE = [
+		{ cookie: 'isUltimateBattle', mode: 'ultimate' },
+		{ cookie: 'isOnlyBans', mode: 'bans' },
+		{ cookie: 'isOnlyPicks', mode: 'picks' },
+		{ cookie: 'isOnlyBanPicks', mode: 'banpicks' }
+	];
+
+	function restoreMode() {
+		var saved = Cookies.get('mode');
+		if (!saved) {
+			saved = LEGACY_MODE.filter(function (item) { return Cookies.get(item.cookie) === 'true'; })
+				.map(function (item) { return item.mode; })[0] || 'all';
+		}
+		$('input[name="bpMode"]').each(function () {
+			var mode = this.value === 'standard' ? 'all' : this.value;
+			$(this).prop('checked', mode === saved);
+		});
+	}
+
 	function restorePreferences() {
 		var side = Cookies.get('team1side');
 		$('#team1side').val(side === 'red' ? 'red' : 'blue');
 		$('#winner').val(Cookies.get('winner') === '2' ? '2' : '1');
 		if (Cookies.get('banNums')) { $('#ChooseBans').val(Cookies.get('banNums')); }
 
-		$('#isChangeSide').prop('checked', Cookies.get('isChangeSide') === 'true');
-		['isUltimateBattle', 'isOnlyBans', 'isOnlyPicks', 'isOnlyBanPicks', 'isGameInProgress'].forEach(function (id) {
+		setChangeSide(Cookies.get('isChangeSide') === 'true');
+		restoreMode();
+		['isGameInProgress', 'isWithoutSpace'].forEach(function (id) {
 			if (Cookies.get(id) !== undefined) {
 				$('#' + id).prop('checked', Cookies.get(id) === 'true');
 			}
 		});
-
-		if ($('#isChangeSide').prop('checked') && $('#team1side').val() === 'blue') {
-			setSide('red');
-		}
+		HeroAutocomplete.setOptions({ ignoreSpaces: withoutSpace() });
 
 		updateSideButton();
 		updateWinnerButton();
@@ -240,6 +246,31 @@
 		$('#winner').text(I18n.t(key, key));
 	}
 
+	function isChangeSide() {
+		return $('#changeSide').attr('data-swapped') === 'true';
+	}
+
+	function withoutSpace() {
+		return $('#isWithoutSpace').prop('checked');
+	}
+
+	function setChangeSide(swapped) {
+		swapped = !!swapped;
+		$('#changeSide').attr('data-swapped', swapped ? 'true' : 'false');
+
+		if (swapped && $('#team1side').val() === 'blue') { setSide('red'); }
+		if (!swapped && $('#team1side').val() === 'red') { setSide('blue'); }
+
+		Cookies.set('isChangeSide', swapped ? 'true' : 'false', { expires: COOKIE_DAYS });
+		renderInputGroups();
+		checkToolbox();
+		ShowBanNum();
+	}
+
+	function updateChangeSideButton() {
+		$('#changeSide').text(I18n.t('ChangeSide', 'Change Side?'));
+	}
+
 	function bindLanguage() {
 		$('#switchToEnglish').on('click', function () {
 			Cookies.set('lang', 'en', { expires: COOKIE_DAYS });
@@ -262,6 +293,7 @@
 			$('#switchToChinese').toggle(current !== 'zh');
 			updateSideButton();
 			updateWinnerButton();
+			updateChangeSideButton();
 			checkDuplicates();
 		};
 		I18n.load(language).then(afterLoad, afterLoad);
@@ -279,7 +311,7 @@
 		} else if (pickedValue && raw === pickedText) {
 			result = { value: pickedValue, status: 'picked' };
 		} else {
-			result = HeroStore.resolve(state.heroes, raw);
+			result = HeroStore.resolve(state.heroes, raw, { ignoreSpaces: withoutSpace() });
 		}
 
 		$input.removeClass('is-invalid is-ambiguous').removeAttr('title');
@@ -321,13 +353,14 @@
 		var raw = String($input.val() || '').trim();
 		if (raw === '') { return ''; }
 
+		var ignoreSpaces = withoutSpace();
 		var pickedValue = $input.data('pickedValue');
 		var pickedText = $input.data('pickedText');
 		var value = (pickedValue && raw === pickedText)
 			? pickedValue
-			: HeroStore.resolve(state.heroes, raw).value;
+			: HeroStore.resolve(state.heroes, raw, { ignoreSpaces: ignoreSpaces }).value;
 
-		return value || 'text:' + HeroStore.normalizeText(raw);
+		return value || 'text:' + HeroStore.normalizeText(raw, ignoreSpaces);
 	}
 
 	function heroLabel(key, $input) {
