@@ -58,13 +58,17 @@
 
 		var previous = {};
 		$container.find('input').each(function () {
-			previous[this.id] = this.value;
+			var $input = $(this);
+			previous[this.id] = {
+				value: this.value,
+				pickedValue: $input.data('pickedValue') || '',
+				pickedText: $input.data('pickedText') || ''
+			};
 		});
 
 		$container.empty();
-		var groups = isChangeSide() ? SWAPPED_GROUPS : GROUPS;
 
-		groups.forEach(function (group, index) {
+		(isChangeSide() ? SWAPPED_GROUPS : GROUPS).forEach(function (group, index) {
 			var $block = $('<div class="bp-group"></div>').attr('id', 'BPDiv' + (index + 1));
 			$('<b class="bp-label"></b>')
 				.attr('data-i18n', group.i18n)
@@ -74,10 +78,14 @@
 			var $row = $('<div class="bp-row"></div>');
 			for (var i = 1; i <= 5; i++) {
 				var id = group.prefix + i;
-				$('<input type="text" autocomplete="off" class="txtBorder">')
+				var old = previous[id] || { value: '', pickedValue: '', pickedText: '' };
+				var $input = $('<input type="text" autocomplete="off" class="txtBorder">')
 					.attr({ id: id, placeholder: id })
-					.val(previous[id] || '')
+					.val(old.value)
 					.appendTo($row);
+				if (old.pickedValue) {
+					$input.data('pickedValue', old.pickedValue).data('pickedText', old.pickedText);
+				}
 			}
 			$block.append($row).appendTo($container);
 			HeroAutocomplete.attach($row.find('input'));
@@ -154,6 +162,7 @@
 		});
 
 		$('#changeSide').on('click', function () {
+			swapTeamData();
 			setChangeSide(!isChangeSide());
 		});
 
@@ -244,6 +253,31 @@
 	function updateWinnerButton() {
 		var key = $('#winner').val() === '2' ? 'Team2' : 'Team1';
 		$('#winner').text(I18n.t(key, key));
+	}
+
+	function swapTeamData() {
+		['h', 'b'].forEach(function (kind) {
+			for (var i = 1; i <= 5; i++) {
+				swapInputPair($('#t1' + kind + i), $('#t2' + kind + i));
+			}
+		});
+		checkDuplicates();
+	}
+
+	function swapInputPair($a, $b) {
+		if (!$a.length || !$b.length) { return; }
+
+		var valueA = $a.val();
+		var pickedValueA = $a.data('pickedValue') || '';
+		var pickedTextA = $a.data('pickedText') || '';
+		var valueB = $b.val();
+		var pickedValueB = $b.data('pickedValue') || '';
+		var pickedTextB = $b.data('pickedText') || '';
+
+		$a.val(valueB).removeData('pickedValue').removeData('pickedText');
+		$b.val(valueA).removeData('pickedValue').removeData('pickedText');
+		if (pickedValueB) { $a.data('pickedValue', pickedValueB).data('pickedText', pickedTextB); }
+		if (pickedValueA) { $b.data('pickedValue', pickedValueA).data('pickedText', pickedTextA); }
 	}
 
 	function isChangeSide() {

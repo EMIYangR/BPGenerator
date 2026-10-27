@@ -301,18 +301,6 @@ textarea:focus {
 	width: auto;
 }
 
-#changeSide[data-swapped="true"] {
-	background: var(--accent-soft);
-	border-color: var(--accent);
-	color: #4d105e;
-}
-
-#changeSide[data-swapped="true"]:hover {
-	background: #e8dcf0;
-	border-color: var(--accent-dark);
-	color: #4d105e;
-}
-
 #inputs-container {
 	margin-top: 16px;
 }

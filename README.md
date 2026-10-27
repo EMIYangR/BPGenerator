@@ -136,7 +136,7 @@ The **Mode** group holds five radio buttons — only one can be selected at a ti
 
 - `Team1Side` — switches between blue and red; Team2 always takes the opposite side
 - `Winner` — switches between Team1 and Team2
-- `Change Side` — swaps the two teams' input blocks and flips Team1Side to red
+- `Change Side` — swaps the two teams' entered heroes: `t1h1` ↔ `t2h1`, `t1b1` ↔ `t2b1` and so on. Their blocks also swap places, so the order you typed stays the same on screen — only the team the heroes belong to changes. Team1Side flips to red.
 
 All three values are remembered in a cookie.
 
