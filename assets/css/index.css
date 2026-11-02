@@ -99,6 +99,11 @@ textarea {
 	gap: 6px 16px;
 }
 
+/* 同一功能区内的多行之间留出呼吸空间 */
+.control-row + .control-row {
+	margin-top: 12px;
+}
+
 .control-row:last-child {
 	margin-bottom: 0;
 }
@@ -297,7 +302,7 @@ textarea:focus {
 	color: #fff;
 }
 
-#changeSide {
+#swapTeams {
 	width: auto;
 }
 
@@ -340,6 +345,12 @@ textarea:focus {
 .bp-row input.is-duplicate {
 	border-color: var(--accent);
 	background: var(--accent-soft);
+}
+
+/* 多余的禁用位：保留占位宽度，只是看不见、不可点 */
+.bp-row input.is-hidden-slot {
+	visibility: hidden;
+	pointer-events: none;
 }
 
 .field-hint {

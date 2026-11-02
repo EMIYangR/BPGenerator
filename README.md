@@ -126,17 +126,18 @@ The **Mode** group holds five radio buttons — only one can be selected at a ti
 | Picks Only | picks only |
 | Bans & Picks | picks + bans |
 
-##### 2. Fill in the match information
-- **BanNums** — 4 or 5 bans per team; the extra ban inputs are hidden.
+##### 2. Settings
+- **BanNums** — 4 or 5 bans per team. The unused slot stays in place (only invisible), so every box keeps the same width.
 - **Game in Progress** — leaves `length` and `winner` empty.
-- **Without Space** — when matching heroes, every space is removed from **both** the text you type and the hero names/aliases, so `flowborn assassin` still matches `Flowborn (Assassin)`.
+- **Ignore Spaces** — when matching heroes, every space is removed from **both** the text you type and the hero names/aliases, so `flowborn assassin` still matches `Flowborn (Assassin)`.
+- **Clear on Swap** — empties every hero box when you click **Swap**, instead of swapping the two teams' entries.
 
 ##### 3. Pick a side and a winner
-`Team1Side`, `Winner` and `Change Side` are toggle buttons:
+`Team1Side`, `Winner` and `Swap` are toggle buttons:
 
 - `Team1Side` — switches between blue and red; Team2 always takes the opposite side
 - `Winner` — switches between Team1 and Team2
-- `Change Side` — swaps the two teams' entered heroes: `t1h1` ↔ `t2h1`, `t1b1` ↔ `t2b1` and so on. Their blocks also swap places, so the order you typed stays the same on screen — only the team the heroes belong to changes. Team1Side flips to red.
+- `Swap` — exchanges the two teams' entered heroes: `t1h1` ↔ `t2h1`, `t1b1` ↔ `t2b1` and so on. Their blocks also swap places, so the order you typed stays the same on screen — only the team the heroes belong to changes. Team1Side flips to red.
 
 All three values are remembered in a cookie.
 

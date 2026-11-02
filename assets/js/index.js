@@ -68,7 +68,7 @@
 
 		$container.empty();
 
-		(isChangeSide() ? SWAPPED_GROUPS : GROUPS).forEach(function (group, index) {
+		(isSwapped() ? SWAPPED_GROUPS : GROUPS).forEach(function (group, index) {
 			var $block = $('<div class="bp-group"></div>').attr('id', 'BPDiv' + (index + 1));
 			$('<b class="bp-label"></b>')
 				.attr('data-i18n', group.i18n)
@@ -98,7 +98,8 @@
 	function ShowBanNum() {
 		var banNum = parseInt($('#ChooseBans').val(), 10) || 5;
 		for (var i = 1; i <= 5; i++) {
-			$('#t1b' + i + ', #t2b' + i).toggle(i <= banNum);
+			// 用 visibility 而不是 display 隐藏，保留占位宽度，避免可见输入框被拉长
+			$('#t1b' + i + ', #t2b' + i).toggleClass('is-hidden-slot', i > banNum);
 		}
 		checkDuplicates();
 	}
@@ -161,9 +162,14 @@
 			checkDuplicates();
 		});
 
-		$('#changeSide').on('click', function () {
-			swapTeamData();
-			setChangeSide(!isChangeSide());
+		$('#swapTeams').on('click', function () {
+			// 默认把两队已填内容互换；勾选「换边时清空」时改为清空所有输入框
+			if (clearInputOnSwap()) {
+				clearHeroInputs();
+			} else {
+				swapTeamData();
+			}
+			setSwapped(!isSwapped());
 		});
 
 		$('#generateButton').on('click', generateAndCopy);
@@ -219,9 +225,12 @@
 		$('#winner').val(Cookies.get('winner') === '2' ? '2' : '1');
 		if (Cookies.get('banNums')) { $('#ChooseBans').val(Cookies.get('banNums')); }
 
-		setChangeSide(Cookies.get('isChangeSide') === 'true');
+		var swapped = Cookies.get('isSwapped');
+		// 兼容旧版本写入的 isChangeSide（旧版「Change Side」按钮，现统一为 Swap）
+		if (swapped === undefined) { swapped = Cookies.get('isChangeSide'); }
+		setSwapped(swapped === 'true');
 		restoreMode();
-		['isGameInProgress', 'isWithoutSpace'].forEach(function (id) {
+		['isGameInProgress', 'isWithoutSpace', 'isClearInput'].forEach(function (id) {
 			if (Cookies.get(id) !== undefined) {
 				$('#' + id).prop('checked', Cookies.get(id) === 'true');
 			}
@@ -255,6 +264,17 @@
 		$('#winner').text(I18n.t(key, key));
 	}
 
+	/** 换边时的另一种行为：直接清空所有英雄输入框。 */
+	function clearHeroInputs() {
+		$('#inputs-container input').val('')
+			.removeData('pickedValue')
+			.removeData('pickedText')
+			.removeClass('is-invalid is-ambiguous is-duplicate')
+			.removeAttr('title');
+		checkDuplicates();
+	}
+
+	/** 已填内容在两队之间互换：同一序号的选择位/禁用位互相换位，连同已选中的英雄值一起搬过去。 */
 	function swapTeamData() {
 		['h', 'b'].forEach(function (kind) {
 			for (var i = 1; i <= 5; i++) {
@@ -280,29 +300,33 @@
 		if (pickedValueA) { $b.data('pickedValue', pickedValueA).data('pickedText', pickedTextA); }
 	}
 
-	function isChangeSide() {
-		return $('#changeSide').attr('data-swapped') === 'true';
+	function isSwapped() {
+		return $('#swapTeams').attr('data-swapped') === 'true';
 	}
 
 	function withoutSpace() {
 		return $('#isWithoutSpace').prop('checked');
 	}
 
-	function setChangeSide(swapped) {
+	function clearInputOnSwap() {
+		return $('#isClearInput').prop('checked');
+	}
+
+	function setSwapped(swapped) {
 		swapped = !!swapped;
-		$('#changeSide').attr('data-swapped', swapped ? 'true' : 'false');
+		$('#swapTeams').attr('data-swapped', swapped ? 'true' : 'false');
 
 		if (swapped && $('#team1side').val() === 'blue') { setSide('red'); }
 		if (!swapped && $('#team1side').val() === 'red') { setSide('blue'); }
 
-		Cookies.set('isChangeSide', swapped ? 'true' : 'false', { expires: COOKIE_DAYS });
+		Cookies.set('isSwapped', swapped ? 'true' : 'false', { expires: COOKIE_DAYS });
 		renderInputGroups();
 		checkToolbox();
 		ShowBanNum();
 	}
 
-	function updateChangeSideButton() {
-		$('#changeSide').text(I18n.t('ChangeSide', 'Change Side?'));
+	function updateSwapButton() {
+		$('#swapTeams').text(I18n.t('Swap', 'Swap'));
 	}
 
 	function bindLanguage() {
@@ -327,7 +351,7 @@
 			$('#switchToChinese').toggle(current !== 'zh');
 			updateSideButton();
 			updateWinnerButton();
-			updateChangeSideButton();
+			updateSwapButton();
 			checkDuplicates();
 		};
 		I18n.load(language).then(afterLoad, afterLoad);

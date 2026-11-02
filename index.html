@@ -104,6 +104,9 @@
 								<option value="4">4</option>
 								<option value="5" selected>5</option>
 							</select>
+							<button type="button" id="swapTeams" class="toggleButton" data-swapped="false" data-i18n="Swap">Swap</button>
+						</div>
+						<div class="control-row">
 							<label>
 								<input type="checkbox" id="isGameInProgress">
 								<b id="GameInProgress" data-i18n="GameInProgress">Game in Progress?</b>
@@ -112,7 +115,10 @@
 								<input type="checkbox" id="isWithoutSpace">
 								<b id="WithoutSpace" data-i18n="WithoutSpace">Ignore Spaces</b>
 							</label>
-							<button type="button" id="changeSide" class="toggleButton" data-swapped="false" data-i18n="ChangeSide">Change Side?</button>
+							<label>
+								<input type="checkbox" id="isClearInput">
+								<b id="ClearInput" data-i18n="ClearInput">Clear on Swap</b>
+							</label>
 						</div>
 					</div>
 
@@ -149,8 +155,8 @@
 					<summary data-i18n="guideTitle">Usage guide</summary>
 					<ol class="guide-steps">
 						<li data-i18n="guideStep1"><b>Mode</b> — five radio buttons, only one at a time. Standard is the default and outputs the complete block; every other option outputs only the lines it needs.</li>
-						<li data-i18n="guideStep2"><b>Match info</b> — set BanNums (4 or 5), tick Game in Progress to leave length and winner blank, and tick Without Space to ignore every space when matching heroes.</li>
-						<li data-i18n="guideStep3"><b>Side and winner</b> — click Team1Side to toggle blue/red; Team2 takes the opposite side automatically, click Winner to toggle Team1/Team2, and click Change Side to swap the two teams’ entered heroes (t1h1 ↔ t2h1, t1b1 ↔ t2b1). Their blocks swap places as well, so what you typed stays in the same order on screen; Team1Side turns red.</li>
+						<li data-i18n="guideStep2"><b>Settings</b> — Game in Progress leaves length and winner blank; BanNums picks 4 or 5 ban slots (the unused one keeps its width, so every box stays the same length); Ignore Spaces drops every space before matching heroes; Clear on Swap empties all hero boxes when you swap.</li>
+						<li data-i18n="guideStep3"><b>Side and winner</b> — click Team1Side to toggle blue/red; Team2 takes the opposite side automatically, click Winner to toggle Team1/Team2, and click <b>Swap</b> to exchange the two teams’ entered heroes (t1h1 ↔ t2h1, t1b1 ↔ t2b1). Their blocks swap places as well, so what you typed stays in the same order on screen; Team1Side turns red.</li>
 						<li data-i18n="guideStep4"><b>Length</b> — MM and SS accept digits only and are padded on blur; leaving them empty produces 00:00.</li>
 						<li data-i18n="guideStep5"><b>Heroes</b> — type a full name or an alias and pick from the list. A red border means no match, a yellow border means several matches, and a hero filled into more than one box is highlighted.</li>
 						<li data-i18n="guideStep6"><b>Keyboard</b> — Tab and Shift+Tab move between inputs and buttons; ↑ / ↓ move through the suggestion list; Enter confirms the highlighted entry; Esc closes the list.</li>
